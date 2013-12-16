@@ -4,7 +4,7 @@ project(vsudoku)
 
 add_definitions(-std=c++11)
 
-set(CMAKE_BUILD_TYPE "DEBUG")
+set(CMAKE_BUILD_TYPE "RELEASE")
 
 find_package(OpenCV REQUIRED)
 

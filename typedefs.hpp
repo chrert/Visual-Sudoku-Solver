@@ -4,7 +4,7 @@
 #include <vector>
 #include <opencv2/core/core.hpp>
 
-typedef std::vector<cv::Point> Contour;
-typedef std::vector<cv::Point2f> Contour2f;
+template<typename T>
+using Contour = std::vector<cv::Point_<T>>;
 
 #endif

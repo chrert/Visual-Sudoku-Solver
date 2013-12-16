@@ -2,15 +2,16 @@
 #define GEOMETRICUTILS_HPP__
 
 #include "typedefs.hpp"
+
 #include <functional>
 #include <algorithm>
-
 #include <opencv2/core/core.hpp>
 
 
 class GeometricUtils
 {
 public:
+  
   static bool computeIntersect(const cv::Vec4f& a, const cv::Vec4f& b, cv::Point2f& intersection)
   {
     float x1 = a[0], y1 = a[1], x2 = a[2], y2 = a[3];
@@ -46,17 +47,27 @@ public:
     return fabs(ib[0]*ic[1] - ib[1]*ic[0])/2.0f;
   }
   
-  inline static cv::Point2f findCornerCenter(const Contour2f& corners)
+  template<typename T>
+  inline static cv::Point_<T> findCornerCenter(const Contour<T>& corners)
   {
       return std::accumulate(std::begin(corners), std::end(corners), 
-                             cv::Point2f(0.f, 0.f)) * (1.f / corners.size());
+                             cv::Point_<T>(0, 0)) * (1. / corners.size());
   }
   
-  static void sortCorners(Contour2f& corners)
+  template<typename T, typename U>
+  static void copyContour(const Contour<T>& src, Contour<U>& dst)
   {
-      const cv::Point2f center = findCornerCenter(corners);
+    dst.clear();
+    for (const auto& p : src)
+      dst.emplace_back(p.x, p.y);
+  }
+  
+  template<typename T>
+  static void sortCorners(Contour<T>& corners)
+  {
+      const cv::Point_<T> center = findCornerCenter(corners);
       
-      Contour2f top, bot;
+      Contour<T> top, bot;
       for (const auto& corner : corners)
       {
           if (corner.y < center.y)
@@ -77,16 +88,12 @@ public:
       corners.emplace_back(bl);
   }
   
-  static Contour2f fitQuadrilateral(Contour convexHull)
+  static Contour<float> fitQuadrilateral(Contour<int> convexHull)
   {
-    Contour2f ret;
-    Contour2f conv;
-    Contour::iterator it;
-    for (const auto& hullPoint : convexHull)
-    {
-      ret.push_back(cv::Point2f(hullPoint.x, hullPoint.y));
-      conv.push_back(cv::Point2f(hullPoint.x, hullPoint.y));
-    }
+    Contour<float> ret;
+    Contour<float> conv;
+    copyContour(convexHull, ret);
+    copyContour(convexHull, conv);
     
     while (ret.size()>4)
     {

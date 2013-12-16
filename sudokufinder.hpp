@@ -17,7 +17,7 @@ public:
   const cv::Mat& getFrame() const;
   const cv::Mat& getProjectedSudoku() const;
   
-  const Contour& getFoundSudokuContour() const;
+  const Contour<int>& getFoundSudokuContour() const;
   
 private:
   
@@ -25,10 +25,10 @@ private:
   cv::Mat _preparedFrame;
   cv::Mat _projectedSudoku;
   
-  Contour _foundContour;
+  Contour<int> _foundContour;
   
-  Contour2f _transformedRect;
-  Contour2f _perspectiveRect;
+  Contour<float> _transformedRect;
+  Contour<float> _perspectiveRect;
   
   void prepareFrame();
   bool findSudoku();

@@ -41,7 +41,7 @@ const cv::Mat& SudokuFinder::getProjectedSudoku() const
   return _projectedSudoku;
 }
 
-const Contour& SudokuFinder::getFoundSudokuContour() const
+const Contour<int>& SudokuFinder::getFoundSudokuContour() const
 {
   return _foundContour;
 }
@@ -70,7 +70,7 @@ void SudokuFinder::transformSudoku()
 
 bool SudokuFinder::findSudoku()
 {
-  std::vector<Contour> contours;
+  std::vector<Contour<int>> contours;
   cv::findContours(_preparedFrame, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
   
   if (contours.empty())
@@ -91,7 +91,7 @@ bool SudokuFinder::findSudoku()
   if (maxArea < MIN_CONTOUR_AREA)
     return false;
   
-  Contour convexHull;
+  Contour<int> convexHull;
   cv::convexHull(contours[maxAreaIndex], convexHull);
   
   if (convexHull.size() < 4)
