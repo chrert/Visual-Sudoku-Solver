@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
     if (sudokuFinder.updateFrame(frame))
     {
       DrawUtils::drawContour(frame, sudokuFinder.getFoundSudokuContour(), cv::Scalar(0, 255, 0));
-      cv::imshow("test", sudokuFinder.getProjectedSudoku());
+      cv::imshow("unwrap", sudokuFinder.getProjectedSudoku());
     }
     
     cv::imshow("frame", frame);
