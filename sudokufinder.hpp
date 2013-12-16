@@ -1,0 +1,38 @@
+#ifndef SUDOKU_FINDER_HPP__
+#define SUDOKU_FINDER_HPP__
+
+#include "typedefs.hpp"
+
+#include <opencv2/core/core.hpp>
+
+class SudokuFinder
+{
+public:
+  
+  SudokuFinder();
+  ~SudokuFinder();
+  
+  bool updateFrame(const cv::Mat& frame);
+  
+  const cv::Mat& getFrame() const;
+  const cv::Mat& getProjectedSudoku() const;
+  
+  const Contour& getFoundSudokuContour() const;
+  
+private:
+  
+  cv::Mat _frame;
+  cv::Mat _preparedFrame;
+  cv::Mat _projectedSudoku;
+  
+  Contour _foundContour;
+  
+  Contour2f _transformedRect;
+  Contour2f _perspectiveRect;
+  
+  void prepareFrame();
+  bool findSudoku();
+  void transformSudoku();
+};
+
+#endif
