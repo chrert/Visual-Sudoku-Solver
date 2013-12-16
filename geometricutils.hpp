@@ -54,7 +54,7 @@ public:
   
   static void sortCorners(Contour2f& corners)
   {
-      auto const center = findCornerCenter(corners);
+      const cv::Point2f center = findCornerCenter(corners);
       
       Contour2f top, bot;
       for (const auto& corner : corners)
@@ -65,10 +65,10 @@ public:
               bot.emplace_back(corner);
       }
 
-      cv::Point2f tl = top[0].x > top[1].x ? top[1] : top[0];
-      cv::Point2f tr = top[0].x > top[1].x ? top[0] : top[1];
-      cv::Point2f bl = bot[0].x > bot[1].x ? bot[1] : bot[0];
-      cv::Point2f br = bot[0].x > bot[1].x ? bot[0] : bot[1];
+      auto tl = top[0].x > top[1].x ? top[1] : top[0];
+      auto tr = top[0].x > top[1].x ? top[0] : top[1];
+      auto bl = bot[0].x > bot[1].x ? bot[1] : bot[0];
+      auto br = bot[0].x > bot[1].x ? bot[0] : bot[1];
 
       corners.clear();
       corners.emplace_back(tl);
@@ -82,7 +82,7 @@ public:
     Contour2f ret;
     Contour2f conv;
     Contour::iterator it;
-    for (auto const hullPoint : convexHull)
+    for (const auto& hullPoint : convexHull)
     {
       ret.push_back(cv::Point2f(hullPoint.x, hullPoint.y));
       conv.push_back(cv::Point2f(hullPoint.x, hullPoint.y));
