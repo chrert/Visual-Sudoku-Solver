@@ -8,6 +8,7 @@
 #include <QGraphicsScene>
 #include <QPixmap>
 #include <QPainter>
+#include <QLabel>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -28,14 +29,18 @@ MainWindow::MainWindow(QWidget *parent) :
     return;
   }
 
+  setupSudokuGrid();
+
   int width = static_cast<int>(_cap.get(CV_CAP_PROP_FRAME_HEIGHT));
   int height = static_cast<int>(_cap.get(CV_CAP_PROP_FRAME_HEIGHT));
   ui->camView->resize(width, height);
-  ui->sudokuView->resize(_sudokuFinder.getRectificationSize(), _sudokuFinder.getRectificationSize());
+
   this->adjustSize();
 
   processTimer = new QTimer();
   connect(processTimer, SIGNAL(timeout()), this, SLOT(process()));
+
+  printOnConsole("Application running...");
   processTimer->start(20);
 }
 
@@ -68,7 +73,7 @@ void MainWindow::process()
     //cv::threshold(sudoku_mat, sudoku_mat, 100, 255, cv::THRESH_BINARY_INV);
   }
 
-  updateSudokuView(sudoku_mat);
+  updateSudokuView();
   updateCamView(frame);
 
 }
@@ -81,13 +86,37 @@ void MainWindow::updateCamView(const cv::Mat &mat)
   ui->camView->setPixmap(QPixmap::fromImage(_qFrame));
 }
 
-void MainWindow::updateSudokuView(const cv::Mat& mat)
+void MainWindow::updateSudokuView()
 {
-  _qSudokuImg = QtOpenCV::MatToQImage(mat, QImage::Format_Indexed8);
-  ui->sudokuView->setPixmap(QPixmap::fromImage(_qSudokuImg));
+  for (size_t row = 0; row < 9; ++row)
+  {
+    for (size_t col = 0; col < 9; ++col)
+    {
+      cv::Mat cell;
+      _sudokuFinder.cell(row, col, cell);
+      _sudokuCells[row][col] = QtOpenCV::MatToQImage(cell, QImage::Format_RGB888);
+      _sudokuViews[row][col]->setPixmap(QPixmap::fromImage(_sudokuCells[row][col]));
+    }
+  }
 }
 
 void MainWindow::printOnConsole(const QString &msg)
 {
   ui->console->appendPlainText(msg);
+}
+
+void MainWindow::setupSudokuGrid()
+{
+  size_t cellSize = _sudokuFinder.getCellSize();
+
+  for (size_t row = 0; row < 9; ++row)
+  {
+    for (size_t col = 0; col < 9; ++col)
+    {
+      QLabel* label = new QLabel(this);
+      label->resize(cellSize, cellSize);
+      _sudokuViews[row][col] = label;
+      ui->sudokuGrid->addWidget(label, row, col);
+    }
+  }
 }

@@ -5,6 +5,7 @@
 #include <QImage>
 #include <QTimer>
 #include <QString>
+#include <QLabel>
 #include <opencv2/highgui/highgui.hpp>
 
 #include "sudokufinder.hpp"
@@ -26,7 +27,7 @@ public slots:
 
 protected:
   void updateCamView(const cv::Mat& mat);
-  void updateSudokuView(const cv::Mat& mat);
+  void updateSudokuView();
 
   void printOnConsole(const QString& msg);
 
@@ -39,7 +40,11 @@ private:
   QTimer* processTimer;
 
   QImage _qFrame;
-  QImage _qSudokuImg;
+
+  QImage  _sudokuCells[9][9];
+  QLabel* _sudokuViews[9][9];
+
+  void setupSudokuGrid();
 };
 
 #endif // MAINWINDOW_HPP

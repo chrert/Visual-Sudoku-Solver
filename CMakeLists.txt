@@ -12,11 +12,11 @@ set(SOURCES main.cpp
             mainwindow.cpp)
 set(HEADERS sudokufinder.hpp
             geometricutils.hpp
-            drawutils.hpp)
+            drawutils.hpp
+            qtopencv.hpp)
 
 set(QT_SOURCES mainwindow.cpp)
-set(QT_HEADERS mainwindow.hpp
-               qtopencv.hpp)
+set(QT_HEADERS mainwindow.hpp)
 
 find_package(OpenCV REQUIRED)
 

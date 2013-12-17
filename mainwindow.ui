@@ -25,11 +25,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="sudokuView">
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-       </widget>
+       <layout class="QGridLayout" name="sudokuGrid"/>
       </item>
      </layout>
     </item>
