@@ -88,7 +88,8 @@ public:
       corners.emplace_back(bl);
   }
   
-  static Contour<float> fitQuadrilateral(Contour<int> convexHull)
+  template<typename T>
+  static Contour<float> fitQuadrilateral(Contour<T> convexHull)
   {
     Contour<float> ret;
     Contour<float> conv;

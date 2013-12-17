@@ -1,32 +1,16 @@
-#include "sudokufinder.hpp"
-#include "drawutils.hpp"
+#include <QApplication>
 
-#include <iostream>
-#include <opencv2/opencv.hpp>
+#include "mainwindow.hpp"
 
 int main(int argc, char **argv) {
-    
-  bool video = argc > 1;
-  
-  SudokuFinder sudokuFinder;
-  
-  cv::VideoCapture cap(0);
-  while (cap.grab())
-  {
-    cv::Mat frame;
-    cap >> frame;
-    
-    if (sudokuFinder.updateFrame(frame))
-    {
-      DrawUtils::drawContour(frame, sudokuFinder.getFoundSudokuContour(), cv::Scalar(0, 255, 0));
-      cv::imshow("unwrap", sudokuFinder.getProjectedSudoku());
-    }
-    
-    cv::imshow("frame", frame);
-    
-    if (cv::waitKey(100) >= 0)
-      break;
-  }
-  
-  return 0;
+  QApplication app(argc, argv);
+
+  MainWindow* window = new MainWindow;
+  window->show();
+
+  int ret = app.exec();
+
+  delete window;
+
+  return ret;
 }

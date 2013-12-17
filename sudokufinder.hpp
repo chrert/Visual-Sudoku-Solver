@@ -9,21 +9,31 @@ class SudokuFinder
 {
 public:
   
-  SudokuFinder();
+  SudokuFinder(size_t cell_size);
   ~SudokuFinder();
   
   bool updateFrame(const cv::Mat& frame);
   
   const cv::Mat& getFrame() const;
-  const cv::Mat& getProjectedSudoku() const;
+  const cv::Mat& getRectifiedSudoku() const;
+  
+  size_t getCellSize() const;
+  size_t getRectificationSize() const;
+  
+  bool cell(size_t row, size_t col, cv::Mat& cell) const;
   
   const Contour<int>& getFoundSudokuContour() const;
   
 private:
   
+  bool _found;
+  
+  size_t _rectification_size;
+  size_t _cell_size;
+  
   cv::Mat _frame;
   cv::Mat _preparedFrame;
-  cv::Mat _projectedSudoku;
+  cv::Mat _rectifiedSudoku;
   
   Contour<int> _foundContour;
   
