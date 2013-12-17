@@ -12,14 +12,16 @@ set(SOURCES main.cpp
             mainwindow.cpp)
 set(HEADERS sudokufinder.hpp
             geometricutils.hpp
-            drawutils.hpp
-            mainwindow.hpp
-            qtopencv.hpp)
+            drawutils.hpp)
+
+set(QT_SOURCES mainwindow.cpp)
+set(QT_HEADERS mainwindow.hpp
+               qtopencv.hpp)
 
 find_package(OpenCV REQUIRED)
 
 find_package(Qt4 REQUIRED)
-qt4_wrap_cpp(HEADERS_MOC ${HEADERS})
+qt4_wrap_cpp(HEADERS_MOC ${QT_HEADERS})
 include(${QT_USE_FILE})
 add_definitions(${QT_DEFINITIONS})
 set(QT_FORMS mainwindow.ui)
@@ -30,6 +32,8 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(vsudoku
                ${SOURCES}
+               ${QT_SOURCES}
+               ${HEADERS}
                ${HEADERS_MOC}
                ${QT_FORMS_HEADERS}
                ${QT_RESOURCES_RCC})
