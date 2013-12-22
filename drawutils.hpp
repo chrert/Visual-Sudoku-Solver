@@ -37,7 +37,6 @@ public:
     tmp.push_back(contour);
     cv::drawContours(img, tmp, 0, color, fill ? CV_FILLED : 1);
   }
-  
 };
 
 #endif

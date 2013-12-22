@@ -1,16 +1,10 @@
 #include "sudokufinder.hpp"
 #include "typedefs.hpp"
+#include "settings.hpp"
 #include "geometricutils.hpp"
 
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
-
-#define CANNY_LOW  40
-#define CANNY_HIGH 80
-
-#define MIN_CONTOUR_AREA 1000
-
-#define NUM_ROWS_CELLS 9
 
 SudokuFinder::SudokuFinder(size_t cell_size) : _frame(), 
                                                _preparedFrame(),
@@ -18,13 +12,13 @@ SudokuFinder::SudokuFinder(size_t cell_size) : _frame(),
                                                _transformedRect(),
                                                _perspectiveRect()
 {
-  _cell_size = cell_size;
-  _rectification_size = cell_size * NUM_ROWS_CELLS;
+  _cellSize = cell_size;
+  _rectificationSize = cell_size * NUM_ROWS_CELLS;
   
   _transformedRect.push_back(cv::Point2f(0, 0));
-  _transformedRect.push_back(cv::Point2f(_rectification_size, 0));
-  _transformedRect.push_back(cv::Point2f(_rectification_size, _rectification_size));
-  _transformedRect.push_back(cv::Point2f(0, _rectification_size));
+  _transformedRect.push_back(cv::Point2f(_rectificationSize, 0));
+  _transformedRect.push_back(cv::Point2f(_rectificationSize, _rectificationSize));
+  _transformedRect.push_back(cv::Point2f(0, _rectificationSize));
   GeometricUtils::sortCorners(_transformedRect);
 }
 
@@ -35,12 +29,12 @@ SudokuFinder::~SudokuFinder()
 
 size_t SudokuFinder::getCellSize() const
 {
-  return _cell_size;
+  return _cellSize;
 }
 
 size_t SudokuFinder::getRectificationSize() const
 {
-  return _rectification_size;
+  return _rectificationSize;
 }
 
 const cv::Mat& SudokuFinder::getFrame() const
@@ -63,7 +57,7 @@ bool SudokuFinder::cell(size_t row, size_t col, cv::Mat& cell) const
   if (row >= NUM_ROWS_CELLS || col >= NUM_ROWS_CELLS || ! _found)
     return false;
   
-  cv::Rect roi(col * _cell_size, row * _cell_size, _cell_size, _cell_size);
+  cv::Rect roi(col * _cellSize, row * _cellSize, _cellSize, _cellSize);
   _rectifiedSudoku(roi).copyTo(cell);
   
   return true;
@@ -92,7 +86,7 @@ bool SudokuFinder::updateFrame(const cv::Mat& frame)
 void SudokuFinder::transformSudoku()
 {
   cv::Mat homography = cv::findHomography(_perspectiveRect, _transformedRect, 0);
-  cv::warpPerspective(_frame, _rectifiedSudoku, homography, cv::Size2f(_rectification_size, _rectification_size));
+  cv::warpPerspective(_frame, _rectifiedSudoku, homography, cv::Size2f(_rectificationSize, _rectificationSize));
 }
 
 bool SudokuFinder::findSudoku()

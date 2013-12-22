@@ -30,6 +30,13 @@
      </layout>
     </item>
     <item>
+     <widget class="QPushButton" name="saveBtn">
+      <property name="text">
+       <string>Save cells</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QPlainTextEdit" name="console">
       <property name="enabled">
        <bool>false</bool>

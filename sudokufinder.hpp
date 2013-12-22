@@ -28,8 +28,8 @@ private:
   
   bool _found;
   
-  size_t _rectification_size;
-  size_t _cell_size;
+  size_t _rectificationSize;
+  size_t _cellSize;
   
   cv::Mat _frame;
   cv::Mat _preparedFrame;
@@ -41,6 +41,7 @@ private:
   Contour<float> _perspectiveRect;
   
   void prepareFrame();
+
   bool findSudoku();
   void transformSudoku();
 };
