@@ -9,8 +9,60 @@ add_definitions(-std=c++11
 
 set(CMAKE_BUILD_TYPE "DEBUG")
 
-file(GLOB_RECURSE SOURCES *.cpp)
-file(GLOB_RECURSE HEADERS *.hpp)
+macro(add_sources)
+    file(RELATIVE_PATH _relPath "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}")
+    foreach(_src ${ARGN})
+        if(_relPath)
+            list(APPEND SOURCES "${_relPath}/${_src}")
+        else()
+            list(APPEND SOURCES "${_src}")
+        endif()
+    endforeach()
+    if(_relPath)
+        # propagate SRCS to parent directory
+        set(SOURCES ${SOURCES} PARENT_SCOPE)
+    endif()
+endmacro()
+
+macro(add_headers)
+    file(RELATIVE_PATH _relPath "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}")
+    foreach(_src ${ARGN})
+        if(_relPath)
+            list(APPEND HEADERS "${_relPath}/${_src}")
+        else()
+            list(APPEND HEADERS "${_src}")
+        endif()
+    endforeach()
+    if(_relPath)
+        # propagate SRCS to parent directory
+        set(HEADERS ${HEADERS} PARENT_SCOPE)
+    endif()
+endmacro()
+
+macro(add_qtforms)
+    file(RELATIVE_PATH _relPath "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}")
+    foreach(_src ${ARGN})
+        if(_relPath)
+            list(APPEND QT_FORMS "${_relPath}/${_src}")
+        else()
+            list(APPEND QT_FORMS "${_src}")
+        endif()
+    endforeach()
+    if(_relPath)
+        # propagate SRCS to parent directory
+        set(QT_FORMS ${QT_FORMS} PARENT_SCOPE)
+    endif()
+endmacro()
+
+macro(forward_vars)
+    set(SOURCES ${SOURCES} PARENT_SCOPE)
+    set(HEADERS ${HEADERS} PARENT_SCOPE)
+    set(QT_FORMS ${QT_FORMS} PARENT_SCOPE)
+endmacro()
+
+add_subdirectory(source)
+add_subdirectory(include)
+add_subdirectory(ui)
 
 include_directories(include)
 
@@ -21,8 +73,6 @@ find_package(Qt5Declarative REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-file(GLOB_RECURSE QT_FORMS *.ui)
 
 qt5_wrap_ui(QT_FORMS_HEADERS ${QT_FORMS})
 
