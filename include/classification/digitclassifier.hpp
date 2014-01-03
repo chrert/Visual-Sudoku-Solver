@@ -5,7 +5,7 @@
 
 #include <vector>
 
-#include "digitextractor.hpp"
+#include "../imgproc/digitextractor.hpp"
 
 class DigitClassifier
 {

@@ -1,12 +1,12 @@
-#include "mainwindow.hpp"
 #include "ui_mainwindow.h"
-#include "savedialog.hpp"
+#include "../../include/gui/mainwindow.hpp"
+#include "../../include/gui/savedialog.hpp"
 
-#include "drawutils.hpp"
-#include "qtopencv.hpp"
-#include "svmdigitclassifier.hpp"
-#include "knndigitclassifier.hpp"
-#include "nndigitclassifier.hpp"
+#include "../../include/utils/drawutils.hpp"
+#include "../../include/utils/qtopencv.hpp"
+#include "../../include/classification/svmdigitclassifier.hpp"
+#include "../../include/classification/knndigitclassifier.hpp"
+#include "../../include/classification/nndigitclassifier.hpp"
 
 #include <QImage>
 #include <QGraphicsScene>

@@ -2,7 +2,7 @@
 #define SVMDIGITCLASSIFIER_HPP__
 
 #include "digitclassifier.hpp"
-#include "digitextractor.hpp"
+#include "../imgproc/digitextractor.hpp"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/ml/ml.hpp>

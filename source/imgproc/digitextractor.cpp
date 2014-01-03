@@ -1,4 +1,4 @@
-#include "digitextractor.hpp"
+#include "../../include/imgproc/digitextractor.hpp"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>

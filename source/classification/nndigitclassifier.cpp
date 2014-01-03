@@ -1,4 +1,4 @@
-#include "nndigitclassifier.hpp"
+#include "../../include/classification/nndigitclassifier.hpp"
 
 NNDigitClassifier::NNDigitClassifier(const DigitExtractor& extractor, size_t sampleWidth, size_t pcaComponents)
   : DigitClassifier(extractor, sampleWidth, pcaComponents),

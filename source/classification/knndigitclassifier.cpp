@@ -1,4 +1,4 @@
-#include "knndigitclassifier.hpp"
+#include "../../include/classification/knndigitclassifier.hpp"
 
 KNNDigitClassifier::KNNDigitClassifier(const DigitExtractor& extractor, size_t sampleWidth, size_t k, size_t pcaComponents)
   : DigitClassifier(extractor, sampleWidth, pcaComponents),

@@ -10,9 +10,9 @@
 
 #include <opencv2/highgui/highgui.hpp>
 
-#include "sudokufinder.hpp"
-#include "digitextractor.hpp"
-#include "digitclassifier.hpp"
+#include "../imgproc/sudokufinder.hpp"
+#include "../imgproc/digitextractor.hpp"
+#include "../classification/digitclassifier.hpp"
 
 namespace Ui {
   class MainWindow;

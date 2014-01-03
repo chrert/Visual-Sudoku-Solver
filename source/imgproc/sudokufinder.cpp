@@ -1,7 +1,7 @@
-#include "sudokufinder.hpp"
-#include "typedefs.hpp"
-#include "settings.hpp"
-#include "geometricutils.hpp"
+#include "../../include/imgproc/sudokufinder.hpp"
+#include "../../include/typedefs.hpp"
+#include "../../include/settings.hpp"
+#include "../../include/utils/geometricutils.hpp"
 
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/calib3d/calib3d.hpp>

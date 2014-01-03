@@ -1,8 +1,8 @@
 #ifndef DIGITEXTRACTOR_HPP__
 #define DIGITEXTRACTOR_HPP__
 
-#include "sudokufinder.hpp"
-#include "settings.hpp"
+#include "../imgproc/sudokufinder.hpp"
+#include "../settings.hpp"
 
 #include <opencv2/core/core.hpp>
 

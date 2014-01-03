@@ -1,7 +1,7 @@
 #ifndef DRAWUTILS_HPP__
 #define DRAWUTILS_HPP__
 
-#include "typedefs.hpp"
+#include "../typedefs.hpp"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>

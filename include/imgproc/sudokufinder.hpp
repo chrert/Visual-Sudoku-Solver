@@ -1,7 +1,7 @@
 #ifndef SUDOKU_FINDER_HPP__
 #define SUDOKU_FINDER_HPP__
 
-#include "typedefs.hpp"
+#include "../typedefs.hpp"
 
 #include <opencv2/core/core.hpp>
 

@@ -1,4 +1,4 @@
-#include "digitclassifier.hpp"
+#include "../../include/classification/digitclassifier.hpp"
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/objdetect/objdetect.hpp>

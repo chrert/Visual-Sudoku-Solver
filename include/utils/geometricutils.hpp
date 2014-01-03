@@ -1,7 +1,7 @@
 #ifndef GEOMETRICUTILS_HPP__
 #define GEOMETRICUTILS_HPP__
 
-#include "typedefs.hpp"
+#include "../typedefs.hpp"
 
 #include <functional>
 #include <algorithm>

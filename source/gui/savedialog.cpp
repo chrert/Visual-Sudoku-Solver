@@ -1,4 +1,4 @@
-#include "savedialog.hpp"
+#include "../../include/gui/savedialog.hpp"
 #include "ui_savedialog.h"
 
 #include <QPixmap>

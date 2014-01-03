@@ -2,7 +2,7 @@
 #define NNDIGITCLASSIFIER_HPP__
 
 #include "digitclassifier.hpp"
-#include "digitextractor.hpp"
+#include "../imgproc/digitextractor.hpp"
 
 #include <opencv2/ml/ml.hpp>
 

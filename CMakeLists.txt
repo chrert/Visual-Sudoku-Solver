@@ -9,20 +9,10 @@ add_definitions(-std=c++11
 
 set(CMAKE_BUILD_TYPE "DEBUG")
 
-set(SOURCES main.cpp
-            sudokufinder.cpp
-            digitextractor.cpp
-            digitclassifier.cpp
-            svmdigitclassifier.cpp
-            knndigitclassifier.cpp
-            nndigitclassifier.cpp
-            mainwindow.cpp
-            savedialog.cpp)
-set(HEADERS typedefs.hpp
-            settings.hpp
-            geometricutils.hpp
-            drawutils.hpp
-            qtopencv.hpp)
+file(GLOB_RECURSE SOURCES *.cpp)
+file(GLOB_RECURSE HEADERS *.hpp)
+
+include_directories(include)
 
 find_package(OpenCV REQUIRED)
 
@@ -32,8 +22,8 @@ find_package(Qt5Declarative REQUIRED)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(QT_FORMS mainwindow.ui
-             savedialog.ui)
+file(GLOB_RECURSE QT_FORMS *.ui)
+
 qt5_wrap_ui(QT_FORMS_HEADERS ${QT_FORMS})
 
 add_executable(vsudoku

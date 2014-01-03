@@ -1,4 +1,4 @@
-#include "svmdigitclassifier.hpp"
+#include "../../include/classification/svmdigitclassifier.hpp"
 
 SVMDigitClassifier::SVMDigitClassifier(const DigitExtractor& extractor, size_t sample_width, size_t pcaComponents)
   : DigitClassifier(extractor, sample_width, pcaComponents),
