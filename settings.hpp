@@ -10,6 +10,8 @@
 
 #define NUM_ROWS_CELLS 9
 
-#define TRAINING_DATA_DIR "../../training_set/"
+#ifndef TRAINING_DATA_DIR
+  #define TRAINING_DATA_DIR "../../training_set/"
+#endif
 
 #endif

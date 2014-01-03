@@ -2,7 +2,10 @@ cmake_minimum_required(VERSION 2.8)
 
 project(vsudoku)
 
-add_definitions(-std=c++11)
+find_file(TRAINING_SET_PATH training_set ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_definitions(-std=c++11
+                -DTRAINING_DATA_DIR="${TRAINING_SET_PATH}/")
 
 set(CMAKE_BUILD_TYPE "DEBUG")
 
