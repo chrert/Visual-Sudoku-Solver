@@ -124,7 +124,7 @@ void MainWindow::updateSudokuView()
             uchar c = _digitClassifier->classifiy(cell1);
             std::stringstream ss;
             ss << static_cast<int>(c);
-            cv::putText(disp, ss.str(), cv::Point(20,40), CV_FONT_HERSHEY_PLAIN, 3, cv::Scalar(255,0,0));
+            cv::putText(disp, ss.str(), cv::Point(0,_sudokuFinder.getCellSize()), CV_FONT_HERSHEY_PLAIN, 3, cv::Scalar(255,0,0));
           }
         }
         _sudokuCells[row][col] = QtOpenCV::MatToQImage(disp, QImage::Format_RGB888);
