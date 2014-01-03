@@ -12,6 +12,7 @@
 
 #include "sudokufinder.hpp"
 #include "digitextractor.hpp"
+#include "digitclassifier.hpp"
 
 namespace Ui {
   class MainWindow;
@@ -27,13 +28,21 @@ public:
 
 private slots:
   void process();
+
   void saveCells();
+  void trainClassifier();
+  void crossValidation();
+
+  void saveClassifier();
+  void loadClassifier();
 
 protected:
   void updateCamView(const cv::Mat& mat);
   void updateSudokuView();
 
   void printOnConsole(const QString& msg);
+
+  bool askForTrainingSamples(std::vector<cv::Mat>* samples);
 
 private:
   Ui::MainWindow *ui;
@@ -42,6 +51,9 @@ private:
 
   SudokuFinder _sudokuFinder;
   DigitExtractor _digitExtractor;
+  DigitClassifier* _digitClassifier;
+
+  bool _classify;
 
   QTimer* _processTimer;
   QMutex _processMutex;
@@ -50,7 +62,6 @@ private:
 
   QImage  _sudokuCells[9][9];
   QLabel* _sudokuViews[9][9];
-
 
   void setupSudokuGrid();
 };

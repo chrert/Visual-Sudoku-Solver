@@ -20,7 +20,10 @@
       <item>
        <widget class="QLabel" name="camView">
         <property name="text">
-         <string>TextLabel</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:48pt; color:#ff0000;&quot;&gt;Test&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::RichText</enum>
         </property>
        </widget>
       </item>
@@ -39,7 +42,13 @@
     <item>
      <widget class="QPlainTextEdit" name="console">
       <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="undoRedoEnabled">
        <bool>false</bool>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -54,8 +63,47 @@
      <height>21</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionLoad"/>
+    <addaction name="actionSave"/>
+   </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionTrain"/>
+    <addaction name="actionCrossValidation"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuTools"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionTrain">
+   <property name="text">
+    <string>Train</string>
+   </property>
+  </action>
+  <action name="actionCrossValidation">
+   <property name="text">
+    <string>Cross Validation</string>
+   </property>
+  </action>
+  <action name="actionLoad">
+   <property name="text">
+    <string>Load Classifier</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Save Classifier</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

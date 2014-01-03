@@ -45,15 +45,12 @@ void SaveDialog::save()
 
   QStringList nameFilters;
   nameFilters << "*.png";
-  dir.setFilter(QDir::Files);
-  dir.setSorting(QDir::Time);
-  dir.setNameFilters(nameFilters);
-  QFileInfoList files = dir.entryInfoList();
+  QFileInfoList files = dir.entryInfoList(nameFilters, QDir::Files, QDir::Time);
 
   int newValue = 0;
   if (! files.empty())
   {
-    QString lastFile = files.at(0).fileName();
+    QString lastFile = files.at(0).baseName();
     newValue = lastFile.toInt() + 1;
   }
   QString newName = QString::number(newValue) + ".png";

@@ -4,6 +4,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #define THRESHOLD_C 10
+#define THRESHOLD_SIZE 9
 
 DigitExtractor::DigitExtractor(const SudokuFinder& sudokuFinder)
   : _sudokuFinder(sudokuFinder),
@@ -74,9 +75,11 @@ void DigitExtractor::extractDigit(const cv::Mat& src, cv::Mat& digit) const
 {
   cv::Mat cell = src.clone();
   cv::cvtColor(cell, cell, CV_BGR2GRAY);
-  cv::adaptiveThreshold(cell, cell, 255, cv::ADAPTIVE_THRESH_MEAN_C,
-                        cv::THRESH_BINARY_INV, 9, THRESHOLD_C);
 
+  cv::adaptiveThreshold(cell, cell, 255, cv::ADAPTIVE_THRESH_MEAN_C,
+                        cv::THRESH_BINARY_INV, THRESHOLD_SIZE, THRESHOLD_C);
+
+  digit = cv::Mat::zeros(src.rows, src.cols, CV_8UC1);
   cv::Mat startPixel = cell(_searchRegion).clone();
   floodExtract(cell, digit, startPixel, _searchRegion);
 
@@ -105,13 +108,13 @@ void DigitExtractor::floodExtract(const cv::Mat& src, cv::Mat& dst,
 
 void DigitExtractor::floodExtract(const cv::Mat &src, cv::Mat &dst, cv::Mat &visited, int row, int col) const
 {
-  uchar& visited_val = visited.at<uchar>(row, col);
-  if (visited_val > 0)
+  uchar visited_val = visited.at<uchar>(row, col);
+  if (visited_val == 1)
     return;
   else
-    visited_val = 255;
+    visited.at<uchar>(row, col) = 1;
 
-  auto src_val = src.at<uchar>(row, col);
+  uchar src_val = src.at<uchar>(row, col);
   if (src_val == 0)
     return;
 
@@ -170,4 +173,4 @@ void DigitExtractor::moveToCenter(cv::Mat& digit) const
   cv::Mat M = cv::Mat(2, 3, CV_64FC1, &m);
   cv::warpAffine(digit, digit, M, cv::Size(cellSize, cellSize),
                  cv::WARP_INVERSE_MAP | cv::INTER_LINEAR);
-}
+  }

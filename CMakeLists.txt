@@ -6,45 +6,39 @@ add_definitions(-std=c++11)
 
 set(CMAKE_BUILD_TYPE "DEBUG")
 
-
 set(SOURCES main.cpp
             sudokufinder.cpp
             digitextractor.cpp
-            mainwindow.cpp)
+            digitclassifier.cpp
+            svmdigitclassifier.cpp
+            knndigitclassifier.cpp
+            nndigitclassifier.cpp
+            mainwindow.cpp
+            savedialog.cpp)
 set(HEADERS typedefs.hpp
             settings.hpp
-            sudokufinder.hpp
             geometricutils.hpp
-            digitextractor.hpp
             drawutils.hpp
             qtopencv.hpp)
 
-set(QT_SOURCES mainwindow.cpp
-               savedialog.cpp)
-set(QT_HEADERS mainwindow.hpp
-               savedialog.hpp)
-
 find_package(OpenCV REQUIRED)
 
-find_package(Qt4 REQUIRED)
-qt4_wrap_cpp(HEADERS_MOC ${QT_HEADERS})
-include(${QT_USE_FILE})
-add_definitions(${QT_DEFINITIONS})
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Declarative REQUIRED)
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 set(QT_FORMS mainwindow.ui
              savedialog.ui)
-set(QT_RESOURCES)
-qt4_wrap_ui(QT_FORMS_HEADERS ${QT_FORMS})
-qt4_add_resources(QT_RESOURCES_RCC ${QT_RESOURCES})
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+qt5_wrap_ui(QT_FORMS_HEADERS ${QT_FORMS})
 
 add_executable(vsudoku
                ${SOURCES}
-               ${QT_SOURCES}
                ${HEADERS}
-               ${HEADERS_MOC}
-               ${QT_FORMS_HEADERS}
-               ${QT_RESOURCES_RCC})
+               ${QT_FORMS_HEADERS})
 
+qt5_use_modules(vsudoku Widgets Declarative)
 
-target_link_libraries(vsudoku ${OpenCV_LIBS} ${QT_LIBRARIES})
+target_link_libraries(vsudoku ${OpenCV_LIBS})
 
