@@ -13,7 +13,7 @@ public:
   virtual ~NNDigitClassifier();
 
   virtual void train(std::vector<cv::Mat>* trainingImages);
-  virtual uchar classifiy(const cv::Mat& image);
+  virtual uchar classify(const cv::Mat& image);
 
   virtual bool load(const std::string& filename);
   virtual bool save(const std::string& filename) const;

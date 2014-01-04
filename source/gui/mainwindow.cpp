@@ -22,155 +22,91 @@
 
 #include <vector>
 
-#define PROCESS_TIMEOUT 200
-
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::MainWindow),
-  _cap(0),
-  _sudokuFinder(40),
-  _digitExtractor(_sudokuFinder),
-  _classify(false)
+  _consoleLock()
 {
-  _digitClassifier = new SVMDigitClassifier(_digitExtractor, 16);
-
   ui->setupUi(this);
 
   connect(ui->saveBtn, SIGNAL(clicked()), this, SLOT(saveCells()));
   connect(ui->actionTrain, SIGNAL(triggered()), this, SLOT(trainClassifier()));
-  connect(ui->actionCrossValidation, SIGNAL(triggered()), this, SLOT(crossValidation()));
+//  connect(ui->actionCrossValidation, SIGNAL(triggered()), this, SLOT(crossValidation()));
   connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveClassifier()));
   connect(ui->actionLoad, SIGNAL(triggered()), this, SLOT(loadClassifier()));
 
-  if (! _cap.isOpened())
-  {
-    printOnConsole("Could not open cam!");
-    return;
-  }
-
   setupSudokuGrid();
-
-  int width = static_cast<int>(_cap.get(CV_CAP_PROP_FRAME_HEIGHT));
-  int height = static_cast<int>(_cap.get(CV_CAP_PROP_FRAME_HEIGHT));
-  ui->camView->resize(width, height);
-
   this->adjustSize();
 
-  _processTimer = new QTimer(this);
-  connect(_processTimer, SIGNAL(timeout()), this, SLOT(process()));
-
-  printOnConsole("Application running...");
-  _processTimer->start(PROCESS_TIMEOUT);
+  _processThread = new ProcessThread(this);
+  qRegisterMetaType<size_t>("size_t");
+  connect(_processThread, SIGNAL(newFrame(const QImage*)), this, SLOT(updateCamView(const QImage*)));
+  connect(_processThread, SIGNAL(digitChanged(size_t,size_t,uchar)), this, SLOT(updateSudokuView(size_t,size_t,uchar)));
+  connect(_processThread, SIGNAL(digitFixed(size_t,size_t,uchar)), this, SLOT(fixSudokuView(size_t,size_t,uchar)));
+  _processThread->start();
 }
 
 MainWindow::~MainWindow()
 {
   delete ui;
-  delete _digitClassifier;
+  delete _processThread;
 }
 
-void MainWindow::process()
+void MainWindow::closing()
 {
-  QMutexLocker lock(&_processMutex);
-
-  if (! _cap.grab())
-  {
-    printOnConsole("No picture from cam! Stop capturing...");
-    _processTimer->stop();
-    return;
-  }
-
-  cv::Mat frame;
-  _cap >> frame;
-
-  if (_sudokuFinder.updateFrame(frame))
-  {
-    DrawUtils::drawContour(frame, _sudokuFinder.getFoundSudokuContour(), cv::Scalar(0, 255, 0));
-
-    if (! _digitExtractor.updateCells())
-      printOnConsole("Error while processing digits!");
-
-  }
-
-  updateSudokuView();
-  updateCamView(frame);
-
+  _processThread->stop();
+  _processThread->wait();
 }
 
-void MainWindow::updateCamView(const cv::Mat &mat)
+void MainWindow::updateCamView(const QImage *image)
 {
-  cv::Mat tmp = mat.clone();
-  cv::cvtColor(mat, tmp, CV_BGR2RGB);
-  _qFrame = QtOpenCV::MatToQImage(tmp, QImage::Format_RGB888);
-  ui->camView->setPixmap(QPixmap::fromImage(_qFrame));
+  ui->camView->setPixmap(QPixmap::fromImage(*image));
 }
 
-void MainWindow::updateSudokuView()
+void MainWindow::updateSudokuView(size_t row, size_t col, uchar response)
 {
-  for (size_t row = 0; row < 9; ++row)
-  {
-    for (size_t col = 0; col < 9; ++col)
-    {
-      cv::Mat disp = cv::Mat::ones(40, 40, CV_8UC3);
-      disp = cv::Scalar(255,255,255);
-      cv::Mat cell;
-      if (_digitExtractor.cell(row, col, cell))
-      {
-        if (_classify && _digitExtractor.containsDigit(row, col))
-        {
-          cv::Mat cell1;
-          if (_sudokuFinder.cell(row, col, cell1))
-          {
-            uchar c = _digitClassifier->classifiy(cell1);
-            std::stringstream ss;
-            ss << static_cast<int>(c);
-            cv::putText(disp, ss.str(), cv::Point(0,_sudokuFinder.getCellSize()), CV_FONT_HERSHEY_PLAIN, 3, cv::Scalar(255,0,0));
-          }
-        }
-        _sudokuCells[row][col] = QtOpenCV::MatToQImage(disp, QImage::Format_RGB888);
-        _sudokuViews[row][col]->setPixmap(QPixmap::fromImage(_sudokuCells[row][col]));
-      }
-    }
-  }
+  _digitViews[row][col]->setPalette(Qt::red);
+  _digitViews[row][col]->display(QString::number(response));
+  _digitViews[row][col]->setEnabled(response != 0);
+}
+
+void MainWindow::fixSudokuView(size_t row, size_t col, uchar response)
+{
+  _digitViews[row][col]->setPalette(Qt::green);
 }
 
 void MainWindow::printOnConsole(const QString &msg)
 {
+  QMutexLocker locker(&_consoleLock);
   ui->console->appendPlainText(msg);
 }
 
 void MainWindow::setupSudokuGrid()
 {
-  size_t cellSize = _sudokuFinder.getCellSize();
-
   for (size_t row = 0; row < 9; ++row)
   {
     for (size_t col = 0; col < 9; ++col)
     {
-      QLabel* label = new QLabel(this);
-      label->resize(cellSize, cellSize);
-      _sudokuViews[row][col] = label;
-      ui->sudokuGrid->addWidget(label, row, col);
+      QLCDNumber *lcd = new QLCDNumber(1, this);
+      lcd->setEnabled(false);
+      lcd->adjustSize();
+      _digitViews[row][col] = lcd;
+      ui->sudokuGrid->addWidget(lcd, row, col);
     }
   }
 }
 
 void MainWindow::saveCells()
 {
-  QMutexLocker lock(&_processMutex);
-  _processTimer->stop();
-
   printOnConsole("Start saving training data...");
 
   for (size_t row = 0; row < NUM_ROWS_CELLS; ++row)
   {
     for (size_t col = 0; col < NUM_ROWS_CELLS; ++col)
     {
-      if (_digitExtractor.containsDigit(row, col))
+      if (_processThread->containsDigit(row, col))
       {
-        cv::Mat cell;
-        _sudokuFinder.cell(row, col, cell);
-        QImage cellImg = QtOpenCV::MatToQImage(cell, QImage::Format_RGB888);
+        QImage cellImg = _processThread->getDigitCell(row, col);
         SaveDialog* dlg = new SaveDialog();
         dlg->setImage(cellImg);
         dlg->exec();
@@ -181,8 +117,6 @@ void MainWindow::saveCells()
   }
 
   printOnConsole("Saving training data done!");
-
-  _processTimer->start(PROCESS_TIMEOUT);
 }
 
 bool MainWindow::askForTrainingSamples(std::vector<cv::Mat>* samples)
@@ -235,91 +169,87 @@ void MainWindow::trainClassifier()
     return;
 
   printOnConsole("Start training...");
-  update();
-  qApp->processEvents();
-  _digitClassifier->train(trainingImages);
+  _processThread->train(trainingImages);
   printOnConsole("Done training!");
-
-  _classify = true;
 
   ui->actionSave->setEnabled(true);
 }
 
-void MainWindow::crossValidation()
-{
-  std::vector<cv::Mat> samples[9];
-  if (! askForTrainingSamples(samples))
-    return;
+//void MainWindow::crossValidation()
+//{
+//  std::vector<cv::Mat> samples[9];
+//  if (! askForTrainingSamples(samples))
+//    return;
 
-  size_t k = 9;
+//  size_t k = 9;
 
-  std::stringstream ss;
-  ss << "Splitting the samples in k=" << k << " parts";
-  printOnConsole(ss.str().c_str());
+//  std::stringstream ss;
+//  ss << "Splitting the samples in k=" << k << " parts";
+//  printOnConsole(ss.str().c_str());
 
-  float meanHitRate = 0.f;
-  for (size_t i = 0; i < k; ++i)
-  {
-    ss.str("");
-    ss << "Test with fold i=" << i << " and train with others";
-    printOnConsole(ss.str().c_str());
+//  float meanHitRate = 0.f;
+//  for (size_t i = 0; i < k; ++i)
+//  {
+//    ss.str("");
+//    ss << "Test with fold i=" << i << " and train with others";
+//    printOnConsole(ss.str().c_str());
 
-    std::vector<cv::Mat> testSet[9];
-    for (size_t j = 0; j < 9; ++j)
-    {
-      size_t numSamples = samples[j].size();
-      size_t foldSize = numSamples / k;
+//    std::vector<cv::Mat> testSet[9];
+//    for (size_t j = 0; j < 9; ++j)
+//    {
+//      size_t numSamples = samples[j].size();
+//      size_t foldSize = numSamples / k;
 
-      auto testStart = std::begin(samples[j]) + (i * foldSize);
-      auto testEnd = testStart + foldSize;
-      if (i == (k-1))
-        testEnd = std::end(samples[j]);
+//      auto testStart = std::begin(samples[j]) + (i * foldSize);
+//      auto testEnd = testStart + foldSize;
+//      if (i == (k-1))
+//        testEnd = std::end(samples[j]);
 
-      if (testStart == std::end(samples[j]))
-        return;
+//      if (testStart == std::end(samples[j]))
+//        return;
 
-      for (auto it = testStart; it != testEnd; ++it)
-        testSet[j].push_back(*it);
+//      for (auto it = testStart; it != testEnd; ++it)
+//        testSet[j].push_back(*it);
 
-      samples[j].erase(testStart, testEnd);
-    }
+//      samples[j].erase(testStart, testEnd);
+//    }
 
-    _digitClassifier->train(samples);
+//    _digitClassifier->train(samples);
 
-    size_t hits = 0;
-    size_t testSetSize = 0;
-    for (size_t j = 0; j < 9; ++j)
-    {
-      testSetSize += testSet[j].size();
-      for (auto it = std::begin(testSet[j]); it != std::end(testSet[j]); ++it)
-      {
-        uchar c = _digitClassifier->classifiy(*it);
-        if (c == (j+1))
-          ++hits;
-        std::cout << "Real: " << j+1 << " / Got: " << (int)c << std::endl;
-      }
-    }
+//    size_t hits = 0;
+//    size_t testSetSize = 0;
+//    for (size_t j = 0; j < 9; ++j)
+//    {
+//      testSetSize += testSet[j].size();
+//      for (auto it = std::begin(testSet[j]); it != std::end(testSet[j]); ++it)
+//      {
+//        uchar c = _digitClassifier->classifiy(*it);
+//        if (c == (j+1))
+//          ++hits;
+//        std::cout << "Real: " << j+1 << " / Got: " << (int)c << std::endl;
+//      }
+//    }
 
-    float hitRate = static_cast<float>(hits) / testSetSize;
+//    float hitRate = static_cast<float>(hits) / testSetSize;
 
-    ss.str("");
-    ss << "Hit-rate: " << hitRate;
-    printOnConsole(ss.str().c_str());
+//    ss.str("");
+//    ss << "Hit-rate: " << hitRate;
+//    printOnConsole(ss.str().c_str());
 
-    meanHitRate += 1.f/k * hitRate;
-  }
+//    meanHitRate += 1.f/k * hitRate;
+//  }
 
-  printOnConsole("Cross validation done!");
-  ss.str("");
-  ss << "Mean hit-rate: " << meanHitRate;
-  printOnConsole(ss.str().c_str());
-}
+//  printOnConsole("Cross validation done!");
+//  ss.str("");
+//  ss << "Mean hit-rate: " << meanHitRate;
+//  printOnConsole(ss.str().c_str());
+//}
 
 void MainWindow::saveClassifier()
 {
-  std::string filename = qPrintable(QFileDialog::getSaveFileName(this, tr("Where to save?")));
+  const QString filename = QFileDialog::getSaveFileName(this, tr("Where to save?"));
 
-  if (_digitClassifier->save(filename))
+  if (_processThread->saveClassifier(filename))
     printOnConsole("Saved classifier...");
   else
     printOnConsole("Cannot save classifier!");
@@ -329,15 +259,10 @@ void MainWindow::loadClassifier()
 {
   ui->actionSave->setEnabled(false);
 
-  std::string filename = qPrintable(QFileDialog::getOpenFileName(this, tr("Choose classifier file")));
+  const QString filename = QFileDialog::getOpenFileName(this, tr("Choose classifier file"));
 
-  if (_digitClassifier->load(filename))
-  {
+  if (_processThread->loadClassifier(filename))
     printOnConsole("Loaded classifier...");
-    _classify = true;
-  }
   else
-  {
     printOnConsole("Cannot load classifier!");
-  }
 }

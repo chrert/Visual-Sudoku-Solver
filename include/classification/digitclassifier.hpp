@@ -15,7 +15,7 @@ public:
   virtual ~DigitClassifier();
 
   virtual void train(std::vector<cv::Mat>* trainingImages) = 0;
-  virtual uchar classifiy(const cv::Mat& image) = 0;
+  virtual uchar classify(const cv::Mat& image) = 0;
 
   virtual bool save(const std::string& filename) const = 0;
   virtual bool load(const std::string& filename) = 0;

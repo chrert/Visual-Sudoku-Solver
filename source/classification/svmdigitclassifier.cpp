@@ -22,10 +22,10 @@ void SVMDigitClassifier::train(std::vector<cv::Mat>* trainingImages)
   _svm->train_auto(trainingMat, labelMat, cv::Mat(), cv::Mat(), params);
 }
 
-uchar SVMDigitClassifier::classifiy(const cv::Mat& image)
+uchar SVMDigitClassifier::classify(const cv::Mat& image)
 {
   if (! _svm)
-    return 0;
+    return NO_DIGIT_FOUND;
 
   cv::Mat prepared = prepareDigitMat(image);
   float response = _svm->predict(prepared);

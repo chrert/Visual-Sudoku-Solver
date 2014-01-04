@@ -36,10 +36,10 @@ void NNDigitClassifier::train(std::vector<cv::Mat>* trainingImages)
   _nn->train(trainingMat, outputVector, cv::Mat());
 }
 
-uchar NNDigitClassifier::classifiy(const cv::Mat& image)
+uchar NNDigitClassifier::classify(const cv::Mat& image)
 {
   if (! _nn)
-    return 0;
+    return NO_DIGIT_FOUND;
 
   cv::Mat prepared = prepareDigitMat(image);
   cv::Mat response;

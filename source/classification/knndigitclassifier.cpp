@@ -21,10 +21,10 @@ void KNNDigitClassifier::train(std::vector<cv::Mat>* trainingImages)
   _knn->train(trainingMat, labelMat);
 }
 
-uchar KNNDigitClassifier::classifiy(const cv::Mat& image)
+uchar KNNDigitClassifier::classify(const cv::Mat& image)
 {
   if (! _knn)
-    return 0;
+    return NO_DIGIT_FOUND;
 
   cv::Mat prepared = prepareDigitMat(image);
   float response = _knn->find_nearest(prepared, std::min(_k, static_cast<size_t>(_knn->get_max_k())));

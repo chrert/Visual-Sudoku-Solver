@@ -1,2 +1,3 @@
 add_headers(mainwindow.hpp
-			savedialog.hpp)
+            savedialog.hpp
+            processthread.hpp)

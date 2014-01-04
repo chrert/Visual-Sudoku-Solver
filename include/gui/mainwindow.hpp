@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_HPP
-#define MAINWINDOW_HPP
+#ifndef MAINWINDOW_HPP__
+#define MAINWINDOW_HPP__
 
 #include <QMainWindow>
 #include <QImage>
@@ -7,9 +7,11 @@
 #include <QString>
 #include <QLabel>
 #include <QMutex>
+#include <QLCDNumber>
 
 #include <opencv2/highgui/highgui.hpp>
 
+#include "processthread.hpp"
 #include "../imgproc/sudokufinder.hpp"
 #include "../imgproc/digitextractor.hpp"
 #include "../classification/digitclassifier.hpp"
@@ -17,6 +19,8 @@
 namespace Ui {
   class MainWindow;
 }
+
+class ProcessThread;
 
 class MainWindow : public QMainWindow
 {
@@ -26,42 +30,37 @@ public:
   explicit MainWindow(QWidget *parent = 0);
   ~MainWindow();
 
-private slots:
-  void process();
+  void printOnConsole(const QString &msg);
 
+public slots:
+  void closing();
+
+private slots:
   void saveCells();
   void trainClassifier();
-  void crossValidation();
+//  void crossValidation();
 
   void saveClassifier();
   void loadClassifier();
 
+  void updateCamView(const QImage *image);
+  void updateSudokuView(size_t row, size_t col, uchar response);
+  void fixSudokuView(size_t row, size_t col, uchar response);
+
 protected:
-  void updateCamView(const cv::Mat& mat);
-  void updateSudokuView();
 
-  void printOnConsole(const QString& msg);
-
-  bool askForTrainingSamples(std::vector<cv::Mat>* samples);
+  bool askForTrainingSamples(std::vector<cv::Mat> *samples);
 
 private:
   Ui::MainWindow *ui;
 
-  cv::VideoCapture _cap;
-
-  SudokuFinder _sudokuFinder;
-  DigitExtractor _digitExtractor;
-  DigitClassifier* _digitClassifier;
-
-  bool _classify;
-
-  QTimer* _processTimer;
-  QMutex _processMutex;
+  QMutex _consoleLock;
 
   QImage _qFrame;
 
-  QImage  _sudokuCells[9][9];
-  QLabel* _sudokuViews[9][9];
+  QLCDNumber *_digitViews[9][9];
+
+  ProcessThread *_processThread;
 
   void setupSudokuGrid();
 };

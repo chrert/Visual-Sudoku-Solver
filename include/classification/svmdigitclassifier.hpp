@@ -16,7 +16,7 @@ public:
   virtual ~SVMDigitClassifier();
 
   virtual void train(std::vector<cv::Mat>* trainingImages);
-  virtual uchar classifiy(const cv::Mat& image);
+  virtual uchar classify(const cv::Mat& image);
 
   virtual bool save(const std::string& filename) const;
   virtual bool load(const std::string& filename);
