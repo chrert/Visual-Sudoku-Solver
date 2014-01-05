@@ -114,13 +114,14 @@ void ProcessThread::stop()
 void ProcessThread::setupResponses()
 {
   _responseCount = 0;
+  _allFixed = false;
   for (size_t row = 0; row < NUM_ROWS_CELLS; ++row)
   {
     for (size_t col = 0; col < NUM_ROWS_CELLS; ++col)
     {
       _digitFixed[row][col] = false;
       for (size_t i = 0; i < NUM_FRAMES_FIXED; ++i)
-        _digitResponses[row][col][i] = NO_DIGIT_FOUND;
+        _digitResponses[row][col][i] = i;
     }
   }
 }
@@ -160,7 +161,8 @@ void ProcessThread::run()
         emit sudokuAppeared();
       }
 
-      DrawUtils::drawContour(frame, _sudokuFinder.getFoundSudokuContour(), cv::Scalar(0, 255, 0));
+      const Color &frameColor = _allFixed ? DrawUtils::COLOR_GREEN : DrawUtils::COLOR_RED;
+      DrawUtils::drawContour(frame, _sudokuFinder.getFoundSudokuContour(), frameColor, 3);
 
       _digitExtractor.updateCells();
 
@@ -188,7 +190,7 @@ void ProcessThread::run()
 
 void ProcessThread::classifyDigits()
 {
-  bool allFixed = true;
+  _allFixed = true;
   for (size_t row = 0; row < NUM_ROWS_CELLS; ++row)
   {
     for (size_t col = 0; col < NUM_ROWS_CELLS; ++col)
@@ -205,21 +207,18 @@ void ProcessThread::classifyDigits()
       emit digitChanged(row, col, digit);
 
       _digitResponses[row][col][_responseCount] = digit;
-      if (digit != NO_DIGIT_FOUND)
+      bool fix = true;
+      for (size_t i = 0; i < NUM_FRAMES_FIXED && fix; ++i)
+        if (digit != _digitResponses[row][col][i])
+          fix = false;
+      if (fix)
       {
-        bool fix = true;
-        for (size_t i = 0; i < NUM_FRAMES_FIXED && fix; ++i)
-          if (digit != _digitResponses[row][col][i])
-            fix = false;
-        if (fix)
-        {
-          _digitFixed[row][col] = true;
-          emit digitFixed(row, col, digit);
-        }
-        else
-        {
-          allFixed = false;
-        }
+        _digitFixed[row][col] = true;
+        emit digitFixed(row, col, digit);
+      }
+      else
+      {
+        _allFixed = false;
       }
     }
   }
@@ -227,6 +226,6 @@ void ProcessThread::classifyDigits()
   if (++_responseCount == NUM_FRAMES_FIXED)
     _responseCount = 0;
 
-  if (allFixed)
+  if (_allFixed)
     emit allDigitsFixed();
 }

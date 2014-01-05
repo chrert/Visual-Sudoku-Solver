@@ -43,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(_processThread, SIGNAL(newFrame(const QImage*)), this, SLOT(updateCamView(const QImage*)));
   connect(_processThread, SIGNAL(digitChanged(size_t,size_t,uchar)), this, SLOT(updateSudokuView(size_t,size_t,uchar)));
   connect(_processThread, SIGNAL(digitFixed(size_t,size_t,uchar)), this, SLOT(fixSudokuView(size_t,size_t,uchar)));
+  connect(_processThread, SIGNAL(sudokuDisappeared()), this, SLOT(clearSudokuView()));
   _processThread->start();
 }
 
@@ -75,6 +76,11 @@ void MainWindow::fixSudokuView(size_t row, size_t col, uchar response)
   _digitViews[row][col]->setPalette(Qt::green);
 }
 
+void MainWindow::clearSudokuView()
+{
+  setupSudokuGrid();
+}
+
 void MainWindow::printOnConsole(const QString &msg)
 {
   QMutexLocker locker(&_consoleLock);
@@ -87,7 +93,11 @@ void MainWindow::setupSudokuGrid()
   {
     for (size_t col = 0; col < 9; ++col)
     {
-      QLCDNumber *lcd = new QLCDNumber(1, this);
+      QLCDNumber *lcd = _digitViews[row][col];
+      if (lcd == nullptr)
+        lcd = new QLCDNumber(1, this);
+      lcd->display(QString::number(NO_DIGIT_FOUND));
+      lcd->setPalette(Qt::black);
       lcd->setEnabled(false);
       lcd->adjustSize();
       _digitViews[row][col] = lcd;

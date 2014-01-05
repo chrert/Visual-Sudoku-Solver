@@ -7,4 +7,6 @@
 template<typename T>
 using Contour = std::vector<cv::Point_<T>>;
 
+typedef cv::Scalar Color;
+
 #endif

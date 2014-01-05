@@ -46,6 +46,7 @@ private slots:
   void updateCamView(const QImage *image);
   void updateSudokuView(size_t row, size_t col, uchar response);
   void fixSudokuView(size_t row, size_t col, uchar response);
+  void clearSudokuView();
 
 protected:
 

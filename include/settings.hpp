@@ -24,6 +24,6 @@
 #endif
 
 #define NUM_FRAMES_FIXED 15
-#define NUM_FRAMES_LOST 5
+#define NUM_FRAMES_LOST 10
 
 #endif

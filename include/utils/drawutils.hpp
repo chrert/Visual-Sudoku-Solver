@@ -10,13 +10,13 @@ class DrawUtils
 {
 public:
   
-  static const cv::Scalar COLOR_WHITE;
-  static const cv::Scalar COLOR_BLACK;
-  static const cv::Scalar COLOR_BLUE;
-  static const cv::Scalar COLOR_GREEN;
-  static const cv::Scalar COLOR_RED;
+  static const Color COLOR_WHITE;
+  static const Color COLOR_BLACK;
+  static const Color COLOR_BLUE;
+  static const Color COLOR_GREEN;
+  static const Color COLOR_RED;
   
-  static void drawRotatedRect(cv::Mat& img, const cv::RotatedRect& rect, const cv::Scalar& color)
+  static void drawRotatedRect(cv::Mat& img, const cv::RotatedRect& rect, const Color& color)
   {
     cv::Point2f points[4];
     rect.points(points);
@@ -31,11 +31,11 @@ public:
   }
   
   template<typename T>
-  static void drawContour(cv::Mat& img, const Contour<T>& contour, const cv::Scalar& color, bool fill = false)
+  static void drawContour(cv::Mat& img, const Contour<T>& contour, const Color& color, unsigned int thickness = 1, bool fill = false)
   {
     std::vector<Contour<T>> tmp;
     tmp.push_back(contour);
-    cv::drawContours(img, tmp, 0, color, fill ? CV_FILLED : 1);
+    cv::drawContours(img, tmp, 0, color, fill ? CV_FILLED : thickness);
   }
 };
 

@@ -69,6 +69,7 @@ private:
   size_t _responseCount;
   uchar _digitResponses[NUM_ROWS_CELLS][NUM_ROWS_CELLS][NUM_FRAMES_FIXED];
   bool _digitFixed[NUM_ROWS_CELLS][NUM_ROWS_CELLS];
+  bool _allFixed;
 
   bool _found;
   size_t _lostCount;
