@@ -8,6 +8,8 @@
 #include "../../include/classification/knndigitclassifier.hpp"
 #include "../../include/classification/nndigitclassifier.hpp"
 
+#include "../../include/solver/sudoku.hpp"
+
 #include <QImage>
 #include <QGraphicsScene>
 #include <QPixmap>
@@ -44,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(_processThread, SIGNAL(digitChanged(size_t,size_t,uchar)), this, SLOT(updateSudokuView(size_t,size_t,uchar)));
   connect(_processThread, SIGNAL(digitFixed(size_t,size_t,uchar)), this, SLOT(fixSudokuView(size_t,size_t,uchar)));
   connect(_processThread, SIGNAL(sudokuDisappeared()), this, SLOT(clearSudokuView()));
+  connect(_processThread, SIGNAL(allDigitsFixed()), this, SLOT(solveSudoku()));
   _processThread->start();
 }
 
@@ -275,4 +278,56 @@ void MainWindow::loadClassifier()
     printOnConsole("Loaded classifier...");
   else
     printOnConsole("Cannot load classifier!");
+}
+
+void MainWindow::solveSudoku()
+{
+  printOnConsole("Start solving");
+  std::vector<std::vector<int>> fields;
+  for (size_t row = 0; row < NUM_ROWS_CELLS; ++row)
+  {
+    vector<int> tmp;
+    for (size_t col = 0; col < NUM_ROWS_CELLS; ++col)
+    {
+      uchar digit = 0;
+      if (_processThread->containsDigit(row, col))
+        digit = _processThread->getDigit(row, col);
+
+      tmp.push_back(digit);
+    }
+    fields.push_back(tmp);
+  }
+
+  try
+  {
+    Sudoku s(fields);
+    if (s.solveSudoku())
+    {
+      printOnConsole("End solving");
+
+      const std::vector<std::vector<int>> solved = s.getSolution();
+      for (size_t row = 0; row < NUM_ROWS_CELLS; ++row)
+      {
+        for (size_t col = 0; col < NUM_ROWS_CELLS; ++col)
+        {
+          if (! _processThread->containsDigit(row, col))
+            setSolutionDigit(row, col, static_cast<uchar>(solved[row][col]));
+        }
+      }
+    }
+    else
+    {
+      printOnConsole("The given sudoku is not solvable!");
+    }
+  }
+  catch (const int e)
+  {
+    printOnConsole("Error solving the sudoku...");
+  }
+}
+
+void MainWindow::setSolutionDigit(size_t row, size_t col, uchar digit)
+{
+  _digitViews[row][col]->setPalette(Qt::yellow);
+  _digitViews[row][col]->display(QString::number(digit));
 }

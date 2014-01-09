@@ -18,7 +18,9 @@ class Sudoku
 	/*
 	 * solveSudoku solves the given sudoku field by calling the method backTracking
 	 */
-	void solveSudoku();
+  bool solveSudoku();
+
+  const vector<vector<int>> & getSolution() const;
 
 
   private:

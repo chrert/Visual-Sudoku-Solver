@@ -115,6 +115,7 @@ void ProcessThread::setupResponses()
 {
   _responseCount = 0;
   _allFixed = false;
+  _fixedSent = false;
   for (size_t row = 0; row < NUM_ROWS_CELLS; ++row)
   {
     for (size_t col = 0; col < NUM_ROWS_CELLS; ++col)
@@ -219,6 +220,7 @@ void ProcessThread::classifyDigits()
       else
       {
         _allFixed = false;
+        _fixedSent = false;
       }
     }
   }
@@ -226,6 +228,9 @@ void ProcessThread::classifyDigits()
   if (++_responseCount == NUM_FRAMES_FIXED)
     _responseCount = 0;
 
-  if (_allFixed)
+  if (_allFixed && ! _fixedSent)
+  {
+    _fixedSent = true;
     emit allDigitsFixed();
+  }
 }

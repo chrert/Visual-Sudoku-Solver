@@ -48,6 +48,8 @@ private slots:
   void fixSudokuView(size_t row, size_t col, uchar response);
   void clearSudokuView();
 
+  void solveSudoku();
+
 protected:
 
   bool askForTrainingSamples(std::vector<cv::Mat> *samples);
@@ -64,6 +66,8 @@ private:
   ProcessThread *_processThread;
 
   void setupSudokuGrid();
+
+  void setSolutionDigit(size_t row, size_t col, uchar digit);
 };
 
 #endif // MAINWINDOW_HPP

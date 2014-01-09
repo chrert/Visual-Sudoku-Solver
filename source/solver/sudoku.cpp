@@ -1,4 +1,4 @@
-#include "sudoku.h"
+#include "../../include/solver/sudoku.hpp"
 
 using namespace std;
 
@@ -10,6 +10,16 @@ Sudoku::Sudoku(vector< vector<int> > field_to_solve)
     _field(field_to_solve)
 {
 	cout << "Sudoku()>> square size: (" << _square_height << "x" << _square_width << ")"<< endl;
+
+  if(_square_height*_square_width != NUM_ROWS_CELLS)
+  {
+    _square_width++;
+    if(_square_height*_square_width != NUM_ROWS_CELLS)
+    {
+      throw(1);
+    }
+    cout << "Sudoku()>> _square_width has been changed to " << _square_width << endl;
+  }
 }
 
 Sudoku::Sudoku(const char* filename)
@@ -128,7 +138,7 @@ bool Sudoku::backTracking(int row, int column)
 	return false;
 }
 
-void Sudoku::solveSudoku()
+bool Sudoku::solveSudoku()
 {
 	bool isSolvable = backTracking(0,0);
 	cout << "solveSudoku()>> ";
@@ -137,6 +147,7 @@ void Sudoku::solveSudoku()
 	else
 		{cout << "Solving Sudoku failed!!!!!!!!!!!!" << endl;}
 	printField();
+  return isSolvable;
 }
 
 void Sudoku::printField()
@@ -152,5 +163,10 @@ void Sudoku::printField()
 		cout << "\n";
 	}
 	cout << "\n";
+}
+
+const vector<vector<int> > & Sudoku::getSolution() const
+{
+  return _field;
 }
 
