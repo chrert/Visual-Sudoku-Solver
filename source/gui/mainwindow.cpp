@@ -42,11 +42,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
   _processThread = new ProcessThread(this);
   qRegisterMetaType<size_t>("size_t");
-  connect(_processThread, SIGNAL(newFrame(const QImage*)), this, SLOT(updateCamView(const QImage*)));
-  connect(_processThread, SIGNAL(digitChanged(size_t,size_t,uchar)), this, SLOT(updateSudokuView(size_t,size_t,uchar)));
-  connect(_processThread, SIGNAL(digitFixed(size_t,size_t,uchar)), this, SLOT(fixSudokuView(size_t,size_t,uchar)));
-  connect(_processThread, SIGNAL(sudokuDisappeared()), this, SLOT(clearSudokuView()));
-  connect(_processThread, SIGNAL(allDigitsFixed()), this, SLOT(solveSudoku()));
+  connect(_processThread, SIGNAL(newFrame(const QImage*)), this, SLOT(updateCamView(const QImage*)), Qt::QueuedConnection);
+  connect(_processThread, SIGNAL(digitChanged(size_t,size_t,uchar)), this, SLOT(updateSudokuView(size_t,size_t,uchar)), Qt::QueuedConnection);
+  connect(_processThread, SIGNAL(digitFixed(size_t,size_t,uchar)), this, SLOT(fixSudokuView(size_t,size_t,uchar)), Qt::QueuedConnection);
+  connect(_processThread, SIGNAL(sudokuDisappeared()), this, SLOT(clearSudokuView()), Qt::QueuedConnection);
+  connect(_processThread, SIGNAL(allDigitsFixed()), this, SLOT(solveSudoku()), Qt::QueuedConnection);
   _processThread->start();
 }
 
