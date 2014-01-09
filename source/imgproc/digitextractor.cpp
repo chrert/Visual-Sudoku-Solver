@@ -1,4 +1,5 @@
 #include "../../include/imgproc/digitextractor.hpp"
+#include "../../include/utils/drawutils.hpp"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -70,7 +71,8 @@ bool DigitExtractor::updateCell(size_t row, size_t col)
 
   return true;
 }
-
+#include<iostream>
+#include<opencv2/highgui/highgui.hpp>
 void DigitExtractor::extractDigit(const cv::Mat& src, cv::Mat& digit) const
 {
   cv::Mat cell = src.clone();

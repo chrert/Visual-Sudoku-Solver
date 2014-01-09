@@ -113,20 +113,19 @@ void MainWindow::saveCells()
 {
   printOnConsole("Start saving training data...");
 
+  std::vector<QImage> cellImgs;
   for (size_t row = 0; row < NUM_ROWS_CELLS; ++row)
-  {
     for (size_t col = 0; col < NUM_ROWS_CELLS; ++col)
-    {
       if (_processThread->containsDigit(row, col))
-      {
-        QImage cellImg = _processThread->getDigitCell(row, col);
-        SaveDialog* dlg = new SaveDialog();
-        dlg->setImage(cellImg);
-        dlg->exec();
-        dlg->save();
-        delete dlg;
-      }
-    }
+        cellImgs.push_back(_processThread->getDigitCell(row, col));
+
+  for (QImage cellImg : cellImgs)
+  {
+    SaveDialog* dlg = new SaveDialog();
+    dlg->setImage(cellImg);
+    dlg->exec();
+    dlg->save();
+    delete dlg;
   }
 
   printOnConsole("Saving training data done!");

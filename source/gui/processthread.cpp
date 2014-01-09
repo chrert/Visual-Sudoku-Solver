@@ -22,6 +22,8 @@ ProcessThread::ProcessThread(MainWindow *window) :
   _extractorFinderMutex(),
   _classifierMutex()
 {
+  moveToThread(this); // TODO: better threading
+
 #ifdef USE_KNN_CLASSIFIER
     _digitClassifier = new KNNDigitClassifier(_digitExtractor, DIGIT_SAMPLE_WIDTH, KNN_K, PCA_COMPONENTS);
 #elif defined USE_SVM_CLASSIFIER
@@ -56,7 +58,7 @@ QImage ProcessThread::getDigitCell(size_t row, size_t col)
   if (! _sudokuFinder.cell(row, col, cell))
     return QImage(_sudokuFinder.getCellSize(), _sudokuFinder.getCellSize(), QImage::Format_RGB888);
 
-  return QtOpenCV::MatToQImage(cell, QImage::Format_RGB888);
+  return QtOpenCV::MatToQImage(cell, QImage::Format_RGB888).copy();
 }
 
 QImage ProcessThread::getPreparedDigitCell(size_t row, size_t col)
@@ -67,7 +69,7 @@ QImage ProcessThread::getPreparedDigitCell(size_t row, size_t col)
   if (! _digitExtractor.cell(row, col, cell))
     return QImage(_sudokuFinder.getCellSize(), _sudokuFinder.getCellSize(), QImage::Format_Indexed8);
 
-  return QtOpenCV::MatToQImage(cell, QImage::Format_Indexed8);
+  return QtOpenCV::MatToQImage(cell, QImage::Format_Indexed8).copy();
 }
 
 uchar ProcessThread::getDigit(size_t row, size_t col)
