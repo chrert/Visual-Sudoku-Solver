@@ -33,11 +33,12 @@ public:
 
   uchar getDigit(size_t row, size_t col);
 
-  void train(std::vector<cv::Mat> *trainingImages);
+  void stop();
+
+public slots:
+  void train(const std::vector<cv::Mat> *trainingImages);
   bool loadClassifier(const QString &filename);
   bool saveClassifier(const QString &filename);
-
-  void stop();
 
 signals:
   void newFrame(const QImage *frame);

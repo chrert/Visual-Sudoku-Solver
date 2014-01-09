@@ -10,7 +10,7 @@ NNDigitClassifier::~NNDigitClassifier()
 {
 }
 
-void NNDigitClassifier::train(std::vector<cv::Mat>* trainingImages)
+void NNDigitClassifier::train(const std::vector<cv::Mat>* trainingImages)
 {
   cv::Mat layers(1, 3, CV_32SC1);
   layers.at<int>(0,0) = getSampleWidth() * getSampleWidth();

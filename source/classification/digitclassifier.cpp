@@ -59,7 +59,7 @@ cv::Mat DigitClassifier::prepareDigitMat(const cv::Mat& in, bool pca) const
     return _pca->project(row);
 }
 
-void DigitClassifier::prepareTrainingMat(std::vector<cv::Mat>* trainingImages, cv::Mat& trainingMat, cv::Mat& labelMat)
+void DigitClassifier::prepareTrainingMat(const std::vector<cv::Mat>* trainingImages, cv::Mat& trainingMat, cv::Mat& labelMat)
 {
   size_t w = _sampleWidth * _sampleWidth;
   size_t num_samples = 0;

@@ -178,7 +178,7 @@ void MainWindow::trainClassifier()
   if (! askForTrainingSamples(trainingImages))
     return;
 
-  printOnConsole("Start training...");
+  printOnConsole("Start training...");;
   _processThread->train(trainingImages);
   printOnConsole("Done training!");
 

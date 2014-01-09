@@ -12,7 +12,7 @@ KNNDigitClassifier::~KNNDigitClassifier()
   cleanup();
 }
 
-void KNNDigitClassifier::train(std::vector<cv::Mat>* trainingImages)
+void KNNDigitClassifier::train(const std::vector<cv::Mat>* trainingImages)
 {
   create();
 

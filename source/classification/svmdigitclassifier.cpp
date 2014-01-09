@@ -11,7 +11,7 @@ SVMDigitClassifier::~SVMDigitClassifier()
   cleanup();
 }
 
-void SVMDigitClassifier::train(std::vector<cv::Mat>* trainingImages)
+void SVMDigitClassifier::train(const std::vector<cv::Mat>* trainingImages)
 {
   cleanup();
 

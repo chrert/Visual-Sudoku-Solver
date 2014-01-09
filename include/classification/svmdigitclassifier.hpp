@@ -15,14 +15,14 @@ public:
   SVMDigitClassifier(const DigitExtractor& extractor, size_t sample_width, size_t pcaComponents = 0);
   virtual ~SVMDigitClassifier();
 
-  virtual void train(std::vector<cv::Mat>* trainingImages);
+  virtual void train(const std::vector<cv::Mat> *trainingImages);
   virtual uchar classify(const cv::Mat& image);
 
   virtual bool save(const std::string& filename) const;
   virtual bool load(const std::string& filename);
 
 private:
-  cv::SVM* _svm;
+  cv::SVM *_svm;
 
   cv::SVMParams create();
   void cleanup();

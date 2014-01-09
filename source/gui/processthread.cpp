@@ -84,7 +84,7 @@ uchar ProcessThread::getDigit(size_t row, size_t col)
   return _digitClassifier->classify(cell);
 }
 
-void ProcessThread::train(std::vector<cv::Mat> *trainingImages)
+void ProcessThread::train(const std::vector<cv::Mat> *trainingImages)
 {
   QMutexLocker lock1(&_extractorFinderMutex);
   QMutexLocker lock2(&_classifierMutex);

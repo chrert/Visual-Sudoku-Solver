@@ -14,7 +14,7 @@ public:
   DigitClassifier(const DigitExtractor& extractor, size_t sampleWidth, size_t pcaComponents = 0);
   virtual ~DigitClassifier();
 
-  virtual void train(std::vector<cv::Mat>* trainingImages) = 0;
+  virtual void train(const std::vector<cv::Mat>* trainingImages) = 0;
   virtual uchar classify(const cv::Mat& image) = 0;
 
   virtual bool save(const std::string& filename) const = 0;
@@ -27,10 +27,10 @@ public:
 
 protected:
   cv::Mat prepareDigitMat(const cv::Mat& in, bool pca = true) const;
-  void prepareTrainingMat(std::vector<cv::Mat>* trainingImages, cv::Mat& trainingMat, cv::Mat& labelMat);
+  void prepareTrainingMat(const std::vector<cv::Mat>* trainingImages, cv::Mat& trainingMat, cv::Mat& labelMat);
 
 private:
-  const DigitExtractor& _extractor;
+  const DigitExtractor &_extractor;
 
   template<typename T>
   cv::Mat toRowVector(const cv::Mat& in) const;
@@ -38,7 +38,7 @@ private:
   size_t _sampleWidth;
 
   size_t _pcaComponents;
-  cv::PCA* _pca;
+  cv::PCA *_pca;
 };
 
 #endif // DIGITCLASSIFIER_HPP
