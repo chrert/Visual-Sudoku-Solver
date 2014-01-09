@@ -70,7 +70,6 @@ include_directories(include)
 find_package(OpenCV REQUIRED)
 
 find_package(Qt5Widgets REQUIRED)
-find_package(Qt5Declarative REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -82,7 +81,7 @@ add_executable(vsudoku
                ${HEADERS}
                ${QT_FORMS_HEADERS})
 
-qt5_use_modules(vsudoku Widgets Declarative)
+qt5_use_modules(vsudoku Widgets)
 
 target_link_libraries(vsudoku ${OpenCV_LIBS})
 
