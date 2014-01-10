@@ -68,20 +68,31 @@ add_subdirectory(ui)
 include_directories(include)
 
 find_package(OpenCV REQUIRED)
+set(LIBS ${OpenCV_LIBS})
 
-find_package(Qt5Widgets REQUIRED)
+if(${USE_QT_5} MATCHES "1")
+  message("Using Qt5")
+  find_package(Qt5Widgets REQUIRED)
+  qt5_wrap_ui(QT_FORMS_HEADERS ${QT_FORMS})
+else()
+  message("Using Qt4")
+  find_package(Qt4 REQUIRED)
+  include(${QT_USE_FILE})
+  qt4_wrap_ui(QT_FORMS_HEADERS ${QT_FORMS})
+  set(LIBS ${LIBS} ${QT_LIBRARIES})
+endif()
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-qt5_wrap_ui(QT_FORMS_HEADERS ${QT_FORMS})
 
 add_executable(vsudoku
                ${SOURCES}
                ${HEADERS}
                ${QT_FORMS_HEADERS})
 
-qt5_use_modules(vsudoku Widgets)
+if(${USE_QT_5} MATCHES "1")
+  qt5_use_modules(vsudoku Widgets)
+endif()
 
-target_link_libraries(vsudoku ${OpenCV_LIBS})
+target_link_libraries(vsudoku ${LIBS})
 

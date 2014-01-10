@@ -42,11 +42,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
   _processThread = new ProcessThread(this);
   qRegisterMetaType<size_t>("size_t");
-  connect(_processThread, SIGNAL(newFrame(const QImage*)), this, SLOT(updateCamView(const QImage*)), Qt::QueuedConnection);
-  connect(_processThread, SIGNAL(digitChanged(size_t,size_t,uchar)), this, SLOT(updateSudokuView(size_t,size_t,uchar)), Qt::QueuedConnection);
-  connect(_processThread, SIGNAL(digitFixed(size_t,size_t,uchar)), this, SLOT(fixSudokuView(size_t,size_t,uchar)), Qt::QueuedConnection);
-  connect(_processThread, SIGNAL(sudokuDisappeared()), this, SLOT(clearSudokuView()), Qt::QueuedConnection);
-  connect(_processThread, SIGNAL(allDigitsFixed()), this, SLOT(solveSudoku()), Qt::QueuedConnection);
+  connect(_processThread, SIGNAL(newFrame(const QImage*)), this, SLOT(updateCamView(const QImage*)));
+  connect(_processThread, SIGNAL(digitChanged(size_t,size_t,uchar)), this, SLOT(updateSudokuView(size_t,size_t,uchar)));
+  connect(_processThread, SIGNAL(digitFixed(size_t,size_t,uchar)), this, SLOT(fixSudokuView(size_t,size_t,uchar)));
+  connect(_processThread, SIGNAL(sudokuDisappeared()), this, SLOT(clearSudokuView()));
+  connect(_processThread, SIGNAL(allDigitsFixed()), this, SLOT(solveSudoku()));
   _processThread->start();
 }
 
@@ -92,14 +92,14 @@ void MainWindow::printOnConsole(const QString &msg)
 
 void MainWindow::setupSudokuGrid()
 {
-  for (size_t row = 0; row < 9; ++row)
+  for (size_t row = 0; row < NUM_ROWS_CELLS; ++row)
   {
-    for (size_t col = 0; col < 9; ++col)
+    for (size_t col = 0; col < NUM_ROWS_CELLS; ++col)
     {
       QLCDNumber *lcd = _digitViews[row][col];
-      if (lcd == nullptr)
+      if (! lcd)
         lcd = new QLCDNumber(1, this);
-      lcd->display(QString::number(NO_DIGIT_FOUND));
+      lcd->display(NO_DIGIT_FOUND);
       lcd->setPalette(Qt::black);
       lcd->setEnabled(false);
       lcd->adjustSize();
@@ -328,5 +328,5 @@ void MainWindow::solveSudoku()
 void MainWindow::setSolutionDigit(size_t row, size_t col, uchar digit)
 {
   _digitViews[row][col]->setPalette(Qt::yellow);
-  _digitViews[row][col]->display(QString::number(digit));
+  _digitViews[row][col]->display(digit);
 }

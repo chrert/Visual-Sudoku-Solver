@@ -8,6 +8,7 @@
 #include <QLabel>
 #include <QMutex>
 #include <QLCDNumber>
+#include <QSignalMapper>
 
 #include <opencv2/highgui/highgui.hpp>
 
