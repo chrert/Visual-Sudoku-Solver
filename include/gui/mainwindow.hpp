@@ -62,7 +62,7 @@ private:
 
   QImage _qFrame;
 
-  QLCDNumber *_digitViews[9][9];
+  QLCDNumber _digitViews[9][9];
 
   ProcessThread *_processThread;
 

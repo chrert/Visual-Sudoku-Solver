@@ -69,14 +69,14 @@ void MainWindow::updateCamView(const QImage *image)
 
 void MainWindow::updateSudokuView(size_t row, size_t col, uchar response)
 {
-  _digitViews[row][col]->setPalette(Qt::red);
-  _digitViews[row][col]->display(QString::number(response));
-  _digitViews[row][col]->setEnabled(response != 0);
+  _digitViews[row][col].setPalette(Qt::red);
+  _digitViews[row][col].display(QString::number(response));
+  _digitViews[row][col].setEnabled(response != 0);
 }
 
 void MainWindow::fixSudokuView(size_t row, size_t col, uchar response)
 {
-  _digitViews[row][col]->setPalette(Qt::green);
+  _digitViews[row][col].setPalette(Qt::green);
 }
 
 void MainWindow::clearSudokuView()
@@ -96,15 +96,13 @@ void MainWindow::setupSudokuGrid()
   {
     for (size_t col = 0; col < NUM_ROWS_CELLS; ++col)
     {
-      QLCDNumber *lcd = _digitViews[row][col];
-      if (! lcd)
-        lcd = new QLCDNumber(1, this);
-      lcd->display(NO_DIGIT_FOUND);
-      lcd->setPalette(Qt::black);
-      lcd->setEnabled(false);
-      lcd->adjustSize();
-      _digitViews[row][col] = lcd;
-      ui->sudokuGrid->addWidget(lcd, row, col);
+      QLCDNumber &lcd = _digitViews[row][col];
+      lcd.setDigitCount(1);
+      lcd.display(NO_DIGIT_FOUND);
+      lcd.setPalette(Qt::black);
+      lcd.setEnabled(false);
+      lcd.adjustSize();
+      ui->sudokuGrid->addWidget(&lcd, row, col);
     }
   }
 }
@@ -327,6 +325,6 @@ void MainWindow::solveSudoku()
 
 void MainWindow::setSolutionDigit(size_t row, size_t col, uchar digit)
 {
-  _digitViews[row][col]->setPalette(Qt::yellow);
-  _digitViews[row][col]->display(digit);
+  _digitViews[row][col].setPalette(Qt::yellow);
+  _digitViews[row][col].display(digit);
 }
