@@ -14,7 +14,7 @@ Software Requirements
 Compiling
 ------------
 
-This project uses CMake as build environment. See the [CMake Documentation]http://www.cmake.org/cmake/help/documentation.html for details.
+This project uses CMake as build environment. See the [CMake Documentation](http://www.cmake.org/cmake/help/documentation.html) for details.
 The following steps are necessary to build the application:
 
 ```bash
