@@ -18,7 +18,7 @@
 
 class MainWindow;
 
-class ProcessThread : public QThread
+class ProcessThread : public QObject
 {
   Q_OBJECT
 
@@ -33,9 +33,11 @@ public:
 
   uchar getDigit(size_t row, size_t col);
 
-  void stop();
 
 public slots:
+  void run();
+  void stop();
+
   void train(const std::vector<cv::Mat> *trainingImages);
   bool loadClassifier(const QString &filename);
   bool saveClassifier(const QString &filename);
@@ -77,8 +79,6 @@ private:
   size_t _lostCount;
 
   void setupResponses();
-
-  void run();
 
   void classifyDigits();
 };

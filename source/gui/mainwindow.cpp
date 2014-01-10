@@ -47,7 +47,12 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(_processThread, SIGNAL(digitFixed(size_t,size_t,uchar)), this, SLOT(fixSudokuView(size_t,size_t,uchar)));
   connect(_processThread, SIGNAL(sudokuDisappeared()), this, SLOT(clearSudokuView()));
   connect(_processThread, SIGNAL(allDigitsFixed()), this, SLOT(solveSudoku()));
-  _processThread->start();
+
+  _thread = new QThread(this);
+  _processThread->moveToThread(_thread);
+  connect(this, SIGNAL(startWorking()), _processThread, SLOT(run()));
+  _thread->start();
+  emit startWorking();
 }
 
 MainWindow::~MainWindow()
@@ -59,7 +64,7 @@ MainWindow::~MainWindow()
 void MainWindow::closing()
 {
   _processThread->stop();
-  _processThread->wait();
+  _thread->wait();
 }
 
 void MainWindow::updateCamView(const QImage *image)

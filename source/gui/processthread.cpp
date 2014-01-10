@@ -22,8 +22,6 @@ ProcessThread::ProcessThread(MainWindow *window) :
   _extractorFinderMutex(),
   _classifierMutex()
 {
-  moveToThread(this); // TODO: better threading
-
 #ifdef USE_KNN_CLASSIFIER
     _digitClassifier = new KNNDigitClassifier(_digitExtractor, DIGIT_SAMPLE_WIDTH, KNN_K, PCA_COMPONENTS);
 #elif defined USE_SVM_CLASSIFIER
@@ -187,7 +185,7 @@ void ProcessThread::run()
     _frame = QtOpenCV::MatToQImage(frameRGB, QImage::Format_RGB888);
     emit newFrame(&_frame);
 
-    msleep(20);
+    QThread::msleep(20);
   }
 }
 

@@ -8,7 +8,7 @@
 #include <QLabel>
 #include <QMutex>
 #include <QLCDNumber>
-#include <QSignalMapper>
+#include <QThread>
 
 #include <opencv2/highgui/highgui.hpp>
 
@@ -32,6 +32,9 @@ public:
   ~MainWindow();
 
   void printOnConsole(const QString &msg);
+
+signals:
+  void startWorking();
 
 public slots:
   void closing();
@@ -65,6 +68,7 @@ private:
   QLCDNumber _digitViews[9][9];
 
   ProcessThread *_processThread;
+  QThread *_thread;
 
   void setupSudokuGrid();
 
