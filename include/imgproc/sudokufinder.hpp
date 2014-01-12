@@ -2,6 +2,7 @@
 #define SUDOKU_FINDER_HPP__
 
 #include "../typedefs.hpp"
+#include "../settings.hpp"
 
 #include <opencv2/core/core.hpp>
 
@@ -16,6 +17,9 @@ public:
   
   const cv::Mat& getFrame() const;
   const cv::Mat& getRectifiedSudoku() const;
+
+  void showSolution(const uchar solution[NUM_ROWS_CELLS][NUM_ROWS_CELLS]);
+  void unshowSolution();
   
   size_t getCellSize() const;
   size_t getRectificationSize() const;
@@ -27,6 +31,9 @@ public:
 private:
   
   bool _found;
+
+  bool _showSolution;
+  uchar _solution[NUM_ROWS_CELLS][NUM_ROWS_CELLS];
   
   size_t _rectificationSize;
   size_t _cellSize;
@@ -39,11 +46,14 @@ private:
   
   Contour<float> _transformedRect;
   Contour<float> _perspectiveRect;
+  cv::Mat _homography;
   
   void prepareFrame();
 
   bool findSudoku();
   void transformSudoku();
+
+  void transformSolutionToFrame();
 };
 
 #endif

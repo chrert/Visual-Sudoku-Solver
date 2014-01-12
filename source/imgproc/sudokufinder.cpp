@@ -2,6 +2,7 @@
 #include "../../include/typedefs.hpp"
 #include "../../include/settings.hpp"
 #include "../../include/utils/geometricutils.hpp"
+#include "../../include/utils/drawutils.hpp"
 
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
@@ -20,6 +21,8 @@ SudokuFinder::SudokuFinder(size_t cell_size) : _frame(),
   _transformedRect.push_back(cv::Point2f(_rectificationSize, _rectificationSize));
   _transformedRect.push_back(cv::Point2f(0, _rectificationSize));
   GeometricUtils::sortCorners(_transformedRect);
+
+  unshowSolution();
 }
 
 
@@ -52,6 +55,17 @@ const Contour<int>& SudokuFinder::getFoundSudokuContour() const
   return _foundContour;
 }
 
+void SudokuFinder::showSolution(const uchar solution[NUM_ROWS_CELLS][NUM_ROWS_CELLS])
+{
+  memcpy(_solution, solution, NUM_ROWS_CELLS*NUM_ROWS_CELLS);
+  _showSolution = true;
+}
+
+void SudokuFinder::unshowSolution()
+{
+  _showSolution = false;
+}
+
 bool SudokuFinder::cell(size_t row, size_t col, cv::Mat& cell) const
 {
   if (row >= NUM_ROWS_CELLS || col >= NUM_ROWS_CELLS || ! _found)
@@ -80,13 +94,42 @@ bool SudokuFinder::updateFrame(const cv::Mat& frame)
   
   transformSudoku();
 
+  if (_showSolution)
+    transformSolutionToFrame();
+
   return true;
+}
+
+void SudokuFinder::transformSolutionToFrame()
+{
+  cv::Mat solutionMat = cv::Mat::ones(_rectificationSize, _rectificationSize, CV_8UC3);
+  for (size_t row = 0; row < NUM_ROWS_CELLS; ++row)
+  {
+    for (size_t col = 0; col < NUM_ROWS_CELLS; ++col)
+    {
+      uchar response = _solution[row][col];
+      if (response != NO_DIGIT_FOUND)
+      {
+        std::stringstream ss;
+        ss << (int) response;
+
+        cv::Point p(col * SUDOKU_CELL_WORKING_SIZE + 5, row * SUDOKU_CELL_WORKING_SIZE + SUDOKU_CELL_WORKING_SIZE-5);
+        cv::putText(solutionMat, ss.str(), p, CV_FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0,165,255));
+      }
+    }
+  }
+  cv::Mat digitFrame = _frame.clone();
+  cv::warpPerspective(solutionMat, digitFrame, _homography, _frame.size(), cv::WARP_INVERSE_MAP);
+  cv::Mat digitFrameMask;
+  cv::cvtColor(digitFrame, digitFrameMask, CV_BGR2GRAY);
+  cv::threshold(digitFrameMask, digitFrameMask, 100, 255, CV_THRESH_BINARY);
+  digitFrame.copyTo(_frame, digitFrameMask);
 }
 
 void SudokuFinder::transformSudoku()
 {
-  cv::Mat homography = cv::findHomography(_perspectiveRect, _transformedRect, 0);
-  cv::warpPerspective(_frame, _rectifiedSudoku, homography, cv::Size2f(_rectificationSize, _rectificationSize));
+  _homography = cv::findHomography(_perspectiveRect, _transformedRect, 0);
+  cv::warpPerspective(_frame, _rectifiedSudoku, _homography, cv::Size2f(_rectificationSize, _rectificationSize));
 }
 
 bool SudokuFinder::findSudoku()

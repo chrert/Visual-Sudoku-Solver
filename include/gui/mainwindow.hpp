@@ -35,6 +35,7 @@ public:
 
 signals:
   void startWorking();
+  void sudokuSolved();
 
 public slots:
   void closing();

@@ -33,10 +33,13 @@ public:
 
   uchar getDigit(size_t row, size_t col);
 
+  void setSolution(uchar solution[NUM_ROWS_CELLS][NUM_ROWS_CELLS]);
+
 
 public slots:
   void run();
   void stop();
+  void showSolvedSudoku();
 
   void train(const std::vector<cv::Mat> *trainingImages);
   bool loadClassifier(const QString &filename);
@@ -74,6 +77,8 @@ private:
   bool _digitFixed[NUM_ROWS_CELLS][NUM_ROWS_CELLS];
   bool _allFixed;
   bool _fixedSent;
+
+  uchar _solution[NUM_ROWS_CELLS][NUM_ROWS_CELLS];
 
   bool _found;
   size_t _lostCount;
