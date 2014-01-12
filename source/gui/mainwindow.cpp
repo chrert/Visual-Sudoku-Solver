@@ -339,10 +339,12 @@ void MainWindow::solveSudoku()
   {
 	  switch(e)
 	  {
-	    case 0: cout << "Problem while opening the file" << endl;break;
-	    case 1: cout << "Inappropriate format of the sudoku field (" << NUM_ROWS_CELLS << "x" << NUM_ROWS_CELLS << ")" << endl;break;
-	    case 2: cout << "Sudoku unsolvable! Some entries violated the sudoku convention" << endl;break;
-	    default: cout << "Unknown Exception was thrown" << endl;break;
+	    case 0: printOnConsole("Problem while opening the file");break;
+	    case 1: printOnConsole("Inappropriate format of the sudoku field!");
+	            cout << "Inappropriate format of the sudoku field (" << NUM_ROWS_CELLS << "x" << NUM_ROWS_CELLS << ")" << endl;break;
+	            break;
+	    case 2: printOnConsole("Sudoku unsolvable! Some entries violated the sudoku convention");break;
+	    default: printOnConsole("Unknown Exception was thrown");break;
 	  }
   }
 }
