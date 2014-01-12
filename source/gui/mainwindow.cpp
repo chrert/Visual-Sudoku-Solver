@@ -64,6 +64,7 @@ MainWindow::~MainWindow()
 void MainWindow::closing()
 {
   _processThread->stop();
+  _thread->terminate();
   _thread->wait();
 }
 
@@ -308,14 +309,26 @@ void MainWindow::solveSudoku()
       printOnConsole("End solving");
 
       const std::vector<std::vector<int>> solved = s.getSolution();
+      uchar solution[NUM_ROWS_CELLS][NUM_ROWS_CELLS];
       for (size_t row = 0; row < NUM_ROWS_CELLS; ++row)
       {
         for (size_t col = 0; col < NUM_ROWS_CELLS; ++col)
         {
+          uchar response = static_cast<uchar>(solved[row][col]);
           if (! _processThread->containsDigit(row, col))
-            setSolutionDigit(row, col, static_cast<uchar>(solved[row][col]));
+          {
+            setSolutionDigit(row, col, response);
+            solution[row][col] = response;
+          }
+          else
+          {
+            solution[row][col] = NO_DIGIT_FOUND;
+          }
         }
       }
+
+      _processThread->setSolution(solution);
+      _processThread->showSolvedSudoku();
     }
     else
     {

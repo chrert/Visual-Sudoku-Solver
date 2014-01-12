@@ -162,6 +162,7 @@ void ProcessThread::run()
         emit sudokuAppeared();
       }
 
+      frame = _sudokuFinder.getFrame();
       const Color &frameColor = _allFixed ? DrawUtils::COLOR_GREEN : DrawUtils::COLOR_RED;
       DrawUtils::drawContour(frame, _sudokuFinder.getFoundSudokuContour(), frameColor, 3);
 
@@ -178,6 +179,7 @@ void ProcessThread::run()
       _found = false;
       _lostCount = 0;
       setupResponses();
+      _sudokuFinder.unshowSolution();
       emit sudokuDisappeared();
     }
 
@@ -233,4 +235,15 @@ void ProcessThread::classifyDigits()
     _fixedSent = true;
     emit allDigitsFixed();
   }
+}
+
+void ProcessThread::setSolution(uchar solution[NUM_ROWS_CELLS][NUM_ROWS_CELLS])
+{
+  memcpy(_solution, solution, NUM_ROWS_CELLS*NUM_ROWS_CELLS);
+}
+
+void ProcessThread::showSolvedSudoku()
+{
+  QMutexLocker finderLock(&_extractorFinderMutex);
+  _sudokuFinder.showSolution(_solution);
 }
