@@ -5,10 +5,12 @@ project(vsudoku)
 find_file(TRAINING_SET_PATH training_set ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_definitions(-std=c++11
+                -pedantic
+                -O3
                 -DTRAINING_DATA_DIR="${TRAINING_SET_PATH}/"
                 -DUSE_SVM_CLASSIFIER)
 
-set(CMAKE_BUILD_TYPE "DEBUG")
+set(CMAKE_BUILD_TYPE "RELEASE")
 
 macro(add_sources)
     file(RELATIVE_PATH _relPath "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}")

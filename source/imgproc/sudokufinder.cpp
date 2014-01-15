@@ -114,7 +114,7 @@ void SudokuFinder::transformSolutionToFrame()
         ss << (int) response;
 
         cv::Point p(col * SUDOKU_CELL_WORKING_SIZE + 5, row * SUDOKU_CELL_WORKING_SIZE + SUDOKU_CELL_WORKING_SIZE-5);
-        cv::putText(solutionMat, ss.str(), p, CV_FONT_HERSHEY_COMPLEX_SMALL, 2, cv::Scalar(0,165,255));
+        cv::putText(solutionMat, ss.str(), p, CV_FONT_HERSHEY_PLAIN, 2.2, DrawUtils::COLOR_GREEN);
       }
     }
   }
