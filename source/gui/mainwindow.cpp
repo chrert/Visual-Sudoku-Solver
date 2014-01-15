@@ -42,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
   _processThread = new ProcessThread(this);
   qRegisterMetaType<size_t>("size_t");
-  connect(_processThread, SIGNAL(newFrame(const QImage*)), this, SLOT(updateCamView(const QImage*)));
+  connect(_processThread, SIGNAL(newFrame(QImage)), this, SLOT(updateCamView(QImage)));
   connect(_processThread, SIGNAL(digitChanged(size_t,size_t,uchar)), this, SLOT(updateSudokuView(size_t,size_t,uchar)));
   connect(_processThread, SIGNAL(digitFixed(size_t,size_t,uchar)), this, SLOT(fixSudokuView(size_t,size_t,uchar)));
   connect(_processThread, SIGNAL(sudokuDisappeared()), this, SLOT(clearSudokuView()));
@@ -68,9 +68,9 @@ void MainWindow::closing()
   _thread->wait();
 }
 
-void MainWindow::updateCamView(const QImage *image)
+void MainWindow::updateCamView(QImage image)
 {
-  ui->camView->setPixmap(QPixmap::fromImage(*image));
+  ui->camView->setPixmap(QPixmap::fromImage(image));
 }
 
 void MainWindow::updateSudokuView(size_t row, size_t col, uchar response)

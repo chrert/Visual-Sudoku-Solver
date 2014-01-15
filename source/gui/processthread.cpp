@@ -185,7 +185,7 @@ void ProcessThread::run()
 
     cv::cvtColor(frame, frameRGB, CV_BGR2RGB);
     _frame = QtOpenCV::MatToQImage(frameRGB, QImage::Format_RGB888);
-    emit newFrame(&_frame);
+    emit newFrame(_frame.copy());
 
     QThread::msleep(20);
   }

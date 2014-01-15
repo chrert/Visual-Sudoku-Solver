@@ -46,7 +46,7 @@ public slots:
   bool saveClassifier(const QString &filename);
 
 signals:
-  void newFrame(const QImage *frame);
+  void newFrame(QImage frame);
 
   void sudokuAppeared();
   void sudokuDisappeared();
