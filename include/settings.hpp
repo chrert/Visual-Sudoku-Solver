@@ -18,6 +18,8 @@
 #define MIN_CONTOUR_AREA 1000
 
 #define NUM_ROWS_CELLS 9
+#define BOX_WIDTH 0
+#define BOX_HEIGHT 0
 
 #ifndef TRAINING_DATA_DIR
   #define TRAINING_DATA_DIR "../../training_set/"
