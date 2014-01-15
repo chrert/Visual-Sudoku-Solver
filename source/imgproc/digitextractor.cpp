@@ -17,8 +17,8 @@ DigitExtractor::DigitExtractor(const SudokuFinder& sudokuFinder)
 
   int cellSize = _sudokuFinder.getCellSize();
 
-  _searchRegion = cv::Rect(cellSize / 2, cellSize / 2,
-                           cellSize / 4, cellSize / 4);
+  _searchRegion = cv::Rect(cellSize / 3, cellSize / 3,
+                           cellSize / 3, cellSize / 3);
 }
 
 bool DigitExtractor::containsDigit(size_t row, size_t col) const
@@ -71,8 +71,7 @@ bool DigitExtractor::updateCell(size_t row, size_t col)
 
   return true;
 }
-#include<iostream>
-#include<opencv2/highgui/highgui.hpp>
+
 void DigitExtractor::extractDigit(const cv::Mat& src, cv::Mat& digit) const
 {
   cv::Mat cell = src.clone();
