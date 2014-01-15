@@ -64,7 +64,6 @@ MainWindow::~MainWindow()
 void MainWindow::closing()
 {
   _processThread->stop();
-  _thread->terminate();
   _thread->wait();
 }
 

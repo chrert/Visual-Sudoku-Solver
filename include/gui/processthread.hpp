@@ -61,8 +61,6 @@ private:
   bool _running;
   bool _classify;
 
-  QImage _frame;
-
   DigitClassifier *_digitClassifier;
   SudokuFinder    _sudokuFinder;
   DigitExtractor  _digitExtractor;
