@@ -18,9 +18,12 @@ class Sudoku
 	/*
 	 * solveSudoku solves the given sudoku field by calling the method backTracking
 	 */
-  bool solveSudoku();
+    bool solveSudoku();
 
-  const vector<vector<int>> & getSolution() const;
+    /*
+     * getSolution returns _field wether it has been solved or not
+     */
+    const vector<vector<int>> & getSolution() const;
 
 
   private:
@@ -29,7 +32,7 @@ class Sudoku
 	 * 	row_number: row to check
 	 * 	value:  	value to check
 	 * 	return:	checkRow returns true, if value could not be found in the corresponding row
-	*/
+	 */
 	bool checkRow(int row_number, int value);
 	
 	/*

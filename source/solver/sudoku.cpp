@@ -14,13 +14,15 @@ Sudoku::Sudoku(vector< vector<int> > field_to_solve)
 	cout << "Sudoku(vec)>> box size: (" << _square_height << "x" << _square_width << ")"<< endl;
 	printField();
 
+	//If one of the entries BOX_WIDTH or BOX_HEIGHT in settings.hpp is 0, the program tries to
+	//calculate the square's height and width.
 	if(_square_height == 0 || _square_width == 0)
 	{
 	  _square_height = floor(sqrt(NUM_ROWS_CELLS));
 	  _square_width = floor(sqrt(NUM_ROWS_CELLS));
 
-	  //If the sudoku field has no square-shaped box, for example a 12x12 sudoku field
-	  //the while loop tries to modify the box size. It does not work for every field sizes.
+	  //If the sudoku field has no square-shaped box, for example a 12x12 sudoku field,
+	  //the while loop tries to modify the box size. It does not work for all field sizes.
 	  while(_square_height*_square_width < NUM_ROWS_CELLS)
 	  {
 	    _square_width++;
@@ -28,7 +30,7 @@ Sudoku::Sudoku(vector< vector<int> > field_to_solve)
 		cout << "Sudoku(vec)>> New box size: (" << _square_height << "x" << _square_width << ")"<< endl;
 	  }
 	}
-	  if(_square_height*_square_width != NUM_ROWS_CELLS)
+	if(_square_height*_square_width != NUM_ROWS_CELLS)
 		{throw(1);}
 
 	//The program checks, if the given numbers obey the sudoku conventions
@@ -44,6 +46,7 @@ Sudoku::Sudoku(vector< vector<int> > field_to_solve)
 			 }
 			else if(!checkRow(row,value_to_check) || !checkColumn(col,value_to_check) || !checkSquare(row,col,value_to_check))
 			{
+			  //The current value_to_check violates the sudoku conventions. An Exception will be thrown
 			  cout << "At (" << row << "," << col << "): " << endl;
 			  _field[row][col] = value_to_check;
 			  printField();
@@ -57,8 +60,8 @@ Sudoku::Sudoku(vector< vector<int> > field_to_solve)
 Sudoku::Sudoku(const char* filename)
   : _field_height(NUM_ROWS_CELLS),
     _field_width(NUM_ROWS_CELLS),
-    _square_height(floor(sqrt(NUM_ROWS_CELLS))),
-    _square_width(floor(sqrt(NUM_ROWS_CELLS)))
+    _square_height(BOX_HEIGHT),
+    _square_width(BOX_WIDTH)
 {
     //The sudoku field is initialized with zeros
 	for(int row=0;row<_field_height;row++)
@@ -71,11 +74,11 @@ Sudoku::Sudoku(const char* filename)
 		_field.push_back(temp);
 	}
 
-	//The given numbers of the sudoku are captured from the 'sudoku_src' file.
+	//The given numbers of the sudoku are captured from the file 'sudoku_src'.
 	ifstream input_file(filename);
 	if(!input_file.is_open())
 	{
-		//If the file could not been opened, an exception will be thrown
+		//If the file could not be opened, an exception will be thrown
 		throw(0);
 	}
 	for(int row=0;row<_field_height;row++)
@@ -101,6 +104,7 @@ Sudoku::Sudoku(const char* filename)
 			 }
 			else if(!checkRow(row,value_to_check) || !checkColumn(col,value_to_check) || !checkSquare(row,col,value_to_check))
 			  {
+				//The current value_to_check violates the sudoku convention. An Exception will be thrown.
 				cout << "At (" << row << "," << col << "): " << endl;
 				_field[row][col] = value_to_check;
 				throw(2);
@@ -109,17 +113,24 @@ Sudoku::Sudoku(const char* filename)
 			  {_field[row][col] = value_to_check;}
 		}
 
-	//If the sudoku field has no square-shaped box, for example a 12x12 sudoku field
-	//the while loop tries to modify the box size. It does not work for every field
-	//sizes.
-	while(_square_height*_square_width < NUM_ROWS_CELLS)
+	//If one of the entries BOX_WIDTH or BOX_HEIGHT in settings.hpp is 0, the program tries to
+	//calculate the square's height and width
+	if(_square_height == 0 || _square_width == 0)
 	{
-		_square_width++;
-		cout << "Sudoku(file)>> box width has been changed." << endl;
-		cout << "Sudoku(file)>> New box size: (" << _square_height << "x" << _square_width << ")"<< endl;
+	  _square_height = floor(sqrt(NUM_ROWS_CELLS));
+	  _square_width = floor(sqrt(NUM_ROWS_CELLS));
+
+	  //If the sudoku field has no square-shaped box, for example a 12x12 sudoku field,
+	  //the while loop tries to modify the box size. It does not work for all field sizes.
+	  while(_square_height*_square_width < NUM_ROWS_CELLS)
+	  {
+	    _square_width++;
+		cout << "Sudoku(vec)>> Box size has been changed." << endl;
+		cout << "Sudoku(vec)>> New box size: (" << _square_height << "x" << _square_width << ")"<< endl;
+	  }
 	}
 	if(_square_height*_square_width != NUM_ROWS_CELLS)
-	  {throw(1);}
+		{throw(1);}
 }
 
 Sudoku::~Sudoku()
@@ -210,7 +221,6 @@ bool Sudoku::solveSudoku()
 
 void Sudoku::printField()
 {
-	//cout << "printField()>> This is what you get:" << endl;
 	cout << "\n";
 	for(int row=0;row<_field_height;row++)
 	{
