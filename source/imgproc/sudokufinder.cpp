@@ -155,11 +155,23 @@ bool SudokuFinder::findSudoku()
   if (maxArea < MIN_CONTOUR_AREA)
     return false;
   
+  Contour<int> &contour = contours[maxAreaIndex];
   Contour<int> convexHull;
-  cv::convexHull(contours[maxAreaIndex], convexHull);
+  cv::convexHull(contour, convexHull);
   
   if (convexHull.size() < 4)
     return false;
+
+  std::vector<int> convexHullIdx;
+  cv::convexHull(contour, convexHullIdx, false, false);
+
+  std::vector<cv::Vec4i> defects;
+  cv::convexityDefects(contour, convexHullIdx, defects);
+  for (const cv::Vec4i &defect : defects)
+  {
+    if (defect[3] > MAX_CONTOUR_CONVEXITY_DEFECT)
+      return false;
+  }
   
   _foundContour = convexHull;
   
