@@ -89,6 +89,7 @@ a4paper,     %% defines the paper size: a4paper (default), a5paper, letterpaper,
 
   %%% graphicx: support for graphics
   \usepackage[pdftex]{graphicx}
+  \usepackage[subfigure]{tocloft}
 
   \pdfcompresslevel=9
 
@@ -338,29 +339,13 @@ in figure \ref{fig:canny}. Since a sudoku is always square or rectangular
 it will appear as a quadrilateral in the image. Therefore, we can just take 
 the biggest convex contour as the contour of the sudoku field.
 
-\begin{figure}
-    \centering
-    \begin{subfigure}[b]{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{imgs/canny_frame.png}
-        \caption{Original frame.}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{imgs/canny.png}
-        \caption{Output of the canny filter.}
-    \end{subfigure}
-    \caption{Canny filtering}
-    \label{fig:canny}
-\end{figure}
-
 Most of the time the sudoku will not be presented parallel to image plane so
 it will be distorted perspectively. In order to simplify the further processing
 we need to remove the perspective by finding a homography between the found
 contour and a proper square. Since the contour consists of many points we need
 to reduce it to the 4 corner points of the quadrilateral. For that purpose we
-implemented an algorithm which approximates
-the best fitting quadrilateral to a polygon\footnote{\url{http://stackoverflow.com/questions/2048024/minimum-area-quadrilateral-algorithm/2050478\#2050478}}.
+implemented an algorithm from \cite{quadrilateral_approx} which approximates
+the best fitting quadrilateral to a polygon.
 
 We also tried to use a Hough-Transformation to find those points but the
 other approach appeared to be more robust.
@@ -369,23 +354,6 @@ Having the corner points the homography can easily be computed and applied
 to the image to perspectively unwarp the sudoku field. Additionally the field
 is scaled to a fixed size to avoid scale issues. Figure \ref{fig:unwarping}
 shows the unwarping.
-
-\begin{figure}
-    \centering
-    \begin{subfigure}[b]{0.70\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{imgs/unwarp_frame.png}
-        \caption{Original frame.}
-    \end{subfigure}
-
-    \begin{subfigure}[b]{0.70\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{imgs/unwarp.png}
-        \caption{Output of the canny filter.}
-    \end{subfigure}
-    \caption{Unwarped sudoku field.}
-    \label{fig:unwarping}
-\end{figure}
 
 \subsection{Digit Segmentation}
 
@@ -396,18 +364,10 @@ it, respectively.
 
 The segmentation of the digits is illustrated in figure \ref{fig:digit_seg}.
 The coarse segmentation is done by applying a gaussian blur to remove some
-noise followed by an adaptive thresholding
-\footnote{\url{http://docs.opencv.org/modules/imgproc/doc/miscellaneous_transformations.html\#adaptivethreshold}}. 
+noise followed by an adaptive thresholding (\cite{adaptive_thresh}). 
 In contrast to an ordinary threshold, the threshold value varies locally
 depending on the mean value of the pixel intensities in the 
 neighborhood around the pixel.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=0.9\textwidth]{imgs/segmentation.png}
-  \caption{Digit segmentation process.}
-  \label{fig:digit_seg}
-\end{figure}
 
 Although this operation works pretty well there is often the problem that
 parts of the grid lines lie inside the image of the cell. Since these lines
@@ -460,10 +420,40 @@ The only preprocessing steps for the training and classification are:
 The training data for the classificator can be extracted directly from the application. It
 provides a gui, which provides the user with a possibility to label the training images
 by hand. The application is then able to save the extracted training data to the file system.
-The file system structure reflect the labeling. Figure \ref{fig:extract_dlg} shows how the
-labeling mechanism works.
+The file system structure reflect the labeling.
 
 \subsection{Sudoku Solving}
+After we processed the digits it was time to actually solve the sudoku. Therefore we 
+implemented a class \emph{Sudoku} which provides all the necessary data and the solving 
+algorithm, as well. Among a variety of algorithms which are capable of solving sudoku puzzles,
+we decided to use the \emph{Backtracking Algorithm}. The basic idea is to enter numbers which
+do not violate the sudoku conventions cell by cell in the empty cells. Each entry then changes
+the possible numbers of the next cell. When the point is reached where an empty call has no 
+possible numbers anymore, the algorithm goes back recursively to the previous cell and changes the value to
+the next possible number or goes back another cell, if the current cell has no candidates, either.
+How the algorithm works in detail is shown in figure \ref{fig:backtracking}.
+
+\begin{figure}[h!btp]
+   \centering   
+   \begin{subfigure}[b]{\linewidth}
+     \includegraphics[height=0.1\textwidth]{imgs/backtracking1.png}\label{fig:b}  
+     \includegraphics[height=0.1\textwidth]{imgs/backtracking2.png}\label{fig:c}
+     \includegraphics[height=0.1\textwidth]{imgs/backtracking3.png}\label{fig:d}
+     \includegraphics[height=0.1\textwidth]{imgs/backtracking4.png}\label{fig:e}
+     \includegraphics[height=0.1\textwidth]{imgs/backtracking5.png}\label{fig:f}
+     \includegraphics[height=0.1\textwidth]{imgs/backtracking6.png}\label{fig:g}
+     \includegraphics[height=0.1\textwidth]{imgs/backtracking7.png}\label{fig:h}
+     \includegraphics[height=0.1\textwidth]{imgs/backtracking8.png}\label{fig:i}
+     \includegraphics[height=0.1\textwidth]{imgs/backtracking9.png}\label{fig:a}
+   \end{subfigure}
+      \caption[Solving a 6x6 Sudoku puzzel with Backtracking]{\scriptsize{Solving a 6x6 Sudoku puzzel with Backtracking. 
+        It can be seen, that the solver enters possible numbers in each empty cell one after the other 
+        (concerned number are shown in red). In picture five and six it can be seen that the numbers 5 and 6 in the first row are 
+        changing position. Because of a lack of possible numbers in picture number seven, the algorithm steps
+        back till the first empty cell and enters the next and in this case final value 5 in the field which 
+        can be seen in picture number nine, where the sudoku if fully solved.}}
+   \label{fig:backtracking}
+\end{figure} 
 
 \subsection{Presenting the Solution}
 
@@ -505,52 +495,44 @@ If those properties are given within the image, the segmentation of the sudoku f
 
 If the motion of the sudoku field in the video is very high, there will be no closed contour of it,
 and therefore, the contour will not be recognized. However, the application does not reset everything because
-the sudoku was not found in one frame. Instead it waits for 10 frames to decide wether the sudoku is gone
+the sudoku was not found in one frame. Instead it waits for 10 frames to decide whether the sudoku is gone
 or not.
 
 \subsection{Digit Segmentation}
-\label{sec:class_perf}
 
-Since the segmentation of the digits was kept very simple, there are not many things that could go
-wrong. For all our tested sudoku sheets the segmentation worked very well. However, there could
-be problems, if the font of the digits is very thin. In this case, the adaptive threshold could
-possibly removes the digit, but we did not find a sudoku with such a font.
+good for tested fields
+could fail for thin fonts
 
 \subsection{Classification}
 
-The classification performance can be measured in many different ways. We have chosen to test the
-performance using k-fold-cross validation with $k=10$. Table \ref{tab:class_perf} shows the results
-for the three different classificators.
-
-\begin{table}
-    \centering
-    \begin{tabular}{|l|l|}
-    \hline
-    \textbf{Classificator}          & \textbf{Hit rate}   \\ \hline
-    k-nearest Neighbors    & $ 99.243\%$ \\ \hline
-    Support Vector Machine & $ 98.481\%$    \\ \hline
-    Neural Network         & $ 60.521\%$    \\ \hline
-    \end{tabular}
-    \caption{Performance of the different classificators.}
-    \label{tab:class_perf}
-\end{table}
-
-The Support Vector Machine and k-nearest Neighbors are very similar with respect to the classification
-performance. Anyway, the SVM is a little bit better so it was chosen to be the default configuration.
-
-The Neural Network showed a really bad performance. This is mainly because we did not find good training
-parameters for it. Since the training of a nerual network is a long running process and the other 
-classificators performed very well, we did not investigate this further. The presented hit rate was
-achieved with one hidden layer of $35$ neurons.
-
-\subsubsection{Performance on new Sudoku Fields}
-
-In section \ref{sec:class_perf} the performance on the training set itself was shown but the application
-should work with any sudoku. We did not really evaluate this but subjectively we can say, that most
-sudokus work out of the box. This is no surprise, because most of the sudokus use a similar fonts with
-similar scaling.
+hit rate of 0.99 using k-fold cross validation on training data
+for new fonts: a few pics improves significantly
 
 \subsection{Sudoku Solver}
+The sudoku Solver, as it is implemented in the class \emph{Sudoku} is capable of solving a larger variety of 
+sudoku fields than the image processing part is able to process. Sudoku fields in the size of 16x16 can be solved.
+A plain field of that size needs 257 iterations of the recursive backtracking algorithm and 2176 different tries.
+But at this size is then the limit for the algorithm. A next bigger plain field of the size 18x18 already needs about
+9 600 000 iterations and several minutes to be solved on the used machine. But since the program is at its current state made to solve 
+sudoku fields of the size up to 9x9 the backtracking algorithm has not been tested on actual sudoku puzzles bigger than 16x16.
+\begin{figure}[h!btp]
+   \begin{center}
+     \begin{subfigure}[b]{\linewidth}
+       \includegraphics[height=3.65cm]{imgs/6x6up.png}\label{fig:j}
+       \includegraphics[height=3.65cm]{imgs/solver_6x6.png}\label{fig:k}
+       \includegraphics[height=3.65cm]{imgs/solver_9x9.png}\label{fig:l}
+       \includegraphics[height=3.65cm]{imgs/solver_12x12.png}\label{fig:m}
+     \end{subfigure}
+        \caption[Different sudoku puzzles with different box sizes]{\scriptsize{Different sudoku puzzles with different box sizes.
+         The pictures one and two are both 6x6 sudokus, but their boxes have a different orientation. In the third picture a
+         9x9 sudoku puzzle can be seen with an usual quadratic box. The fourth picture shows a 12x12 sudoku again with a rectangular
+         shaped box.}}
+     \label{fig:boxshapes}
+   \end{center}
+\end{figure} 
+Furthermore also sudoku puzzles with rectangular shaped boxes can be solved. Such puzzles are shown in figure \ref{fig:boxshapes}.
+The size of the box has then be initialised in \emph{settings.hpp}. The program may also try to calculate the box size on, but this works only to a certain extend. Despite that
+the orientation of the box can not be determined that way.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion}
@@ -575,7 +557,7 @@ Blablabla
 
 %%% name of the bibliography file without .bib
 %%% e.g.: literatur.bib -> \bibliography{literatur}
-% \bibliography{literature}
+% \bibliography{FIXXME}
 
 \end{document}
 %%% }}}
