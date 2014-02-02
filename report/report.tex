@@ -362,12 +362,12 @@ cells. In each cell we have to decide if it contains a digit and segment
 it, respectively.
 
 The segmentation of the digits is illustrated in figure \ref{fig:digit_seg}.
-The coarse segmentation is done by applying a gaussian blur to remove some
+The coarse segmentation is done by applying a Gaussian blur to remove some
 noise followed by an adaptive thresholding
 \footnote{\url{http://docs.opencv.org/modules/imgproc/doc/miscellaneous_transformations.html\#adaptivethreshold}}. 
 In contrast to an ordinary threshold, the threshold value varies locally
 depending on the mean value of the pixel intensities in the 
-neighborhood around the pixel.
+neighbourhood around the pixel.
 
 \begin{figure}
   \centering
@@ -381,7 +381,7 @@ parts of the grid lines lie inside the image of the cell. Since these lines
 have approximately the same thickness as the digits they can not be removed
 by the thresholding. To overcome this issue we assume that a small region
 in the middle of the image does only contain pixels belonging to the digit.
-Starting from these pixels we start a a connected component search to find the
+Starting from these pixels we start a connected component search to find the
 rest of the digit. All other pixels will be discarded.
 
 \subsection{Digit Classification}
@@ -398,7 +398,7 @@ since it yielded the best results. In section \ref{sec:results} we will discuss 
 of them in detail.
 
 Although there would be the possibility to compute descriptors of the segmented digits
-(eg. Histogram of Oriented Gradients) we decided to use the plain binary image data
+(e.g. Histogram of Oriented Gradients) we decided to use the plain binary image data
 as input to the classifier.
 
 The only preprocessing steps for the training and classification are:
@@ -425,10 +425,10 @@ The only preprocessing steps for the training and classification are:
 \subsubsection{Training data}
 
 The training data for the classificator can be extracted directly from the application. It
-provides a gui, which provides the user with a possibility to label the training images
+provides a GUI, which provides the user with a possibility to label the training images
 by hand. The application is then able to save the extracted training data to the file system.
-The file system structure reflect the labeling. Figure \ref{fig:extract_dlg} shows how the
-labeling mechanism works.
+The file system structure reflect the labelling. Figure \ref{fig:extract_dlg} shows how the
+labelling mechanism works.
 
 \subsection{Sudoku Solving}
 After we processed the digits it is now time to actually solve the sudoku. Therefore we 
@@ -436,11 +436,11 @@ implemented a class \emph{Sudoku} which provides all necessary data to deal with
 as well as the solving algorithm. Among a variety of algorithms which are capable of solving sudokus,
 we decided to use the \emph{Backtracking Algorithm}. Backtracking is not the fastest,
 but a less complicated algorithm to solve sudoku puzzles. Since we decided to design the program 
-only to solve sudokus up to a size of 9x9, backtracking was the better choice to this problem class than faster,
-but more complicated algorithms. \newline \newline The basic idea in backtracking is to enter numbers which
-do not violate the sudoku conventions, cell by cell in the empty cells. Each entry then changes
-the possible numbers of the next empty cell. When the point is reached where an empty call has no 
-possible numbers anymore, the algorithm goes back recursively to the previous cell and changes the value to
+only to solve sudokus up to a size of $9 \times 9$, backtracking was the better choice to this problem class than faster,
+but more complicated algorithms. \newline \newline The basic idea of backtracking is to enter numbers which
+do not violate the sudoku conventions, cell by cell, in the empty cells. Each entry then changes
+the possible entries of the next empty cell. When the point is reached where an empty call has no 
+possible entry anymore, the algorithm goes back recursively to the previous cell and changes the value to
 the next possible number or goes back another cell, if the current cell has no candidates, either.
 How the algorithm works in detail is shown in figure \ref{fig:backtracking}.
 
@@ -482,11 +482,11 @@ How the algorithm works in detail is shown in figure \ref{fig:backtracking}.
        \includegraphics[height=1.55cm]{imgs/backtracking9.png}
        \subcaption{}
      \end{minipage}     
-      \caption[Solving a 6x6 Sudoku puzzel with Backtracking]{\scriptsize{Solving a 6x6 Sudoku puzzel with Backtracking. 
+      \caption[Solving a $6 \times 6$ Sudoku puzzle with Backtracking]{\scriptsize{Solving a a $6 \times 6$ Sudoku puzzle with Backtracking. 
         It can be seen, that the solver enters possible numbers in each empty cell one after the other which is shown in 
         the figures (a) to (e). In figure (e) and (f) can be seen, that the numbers 5 and 6 in the first row are 
-        changing position to obey the sudoku rules. Because of a lack of possible numbers in picture (g), the algorithm steps
-        back till one of the previous cells has a second possible number to enter. Here backtracking goes back till the first
+        changing position to obey the sudoku rules. Because of a lack of possible numbers in figure (g), the algorithm steps
+        back till one of the previous cells has a second possible entry to enter. Here backtracking goes back till the first
         empty cell and enters the next possible and in that case final number 5. To verify this the fully solved sudoku can be
         seen in figure (f)}}
    \label{fig:backtracking}
@@ -496,7 +496,7 @@ How the algorithm works in detail is shown in figure \ref{fig:backtracking}.
 
 The projection of the solution onto the original image is not a big deal, since we already
 found the homography as described in section \ref{sec:find}. Therefore we can draw the solution
-on the rectified imaged and apply the homography inversely.
+on the rectified image and apply the homography inversely.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}
@@ -564,11 +564,11 @@ for the three different classificators.
     \label{tab:class_perf}
 \end{table}
 
-The Support Vector Machine and k-nearest Neighbors are very similar with respect to the classification
+The Support Vector Machine and k-nearest Neighbours are very similar with respect to the classification
 performance. Anyway, the SVM is a little bit better so it was chosen to be the default configuration.
 
 The Neural Network showed a really bad performance. This is mainly because we did not find good training
-parameters for it. Since the training of a nerual network is a long running process and the other 
+parameters for it. Since the training of a neural network is a long running process and the other 
 classificators performed very well, we did not investigate this further. The presented hit rate was
 achieved with one hidden layer of $35$ neurons.
 
@@ -576,18 +576,18 @@ achieved with one hidden layer of $35$ neurons.
 
 In section \ref{sec:class_perf} the performance on the training set itself was shown but the application
 should work with any sudoku. We did not really evaluate this but subjectively we can say, that most
-sudokus work out of the box. This is no surprise, because most of the sudokus use a similar fonts with
+sudokus work out of the box. This is no surprise, because most of the sudokus use similar fonts with
 similar scaling.
 
 \subsection{Sudoku Solver}
 \label{imp_sudoku_solver}
 
 The sudoku Solver, as it is implemented in the class \emph{Sudoku}, is capable of solving a larger variety of 
-sudoku puzzles than the image processing part is able to process. Sudoku fields in the size of 16x16 can be solved.
-A plain field of that size needs about 257 iterations of the recursive backtracking algorithm. But this size is also the limit 
-for the algorithm. A next bigger plain field of the size 18x18 already needs about 9 600 000 iterations and several 
-minutes to be solved. But since the program at its current state is made to solve sudoku fields of the size up to 9x9, the 
-backtracking algorithm has not been tested on real sudoku puzzles bigger than 16x16. The implementation of the algorithm, 
+sudoku puzzles than the image processing part is able to process. Sudoku fields in the size of a $16 \times 16$ can be solved.
+A plain field of that size needs about 257 iterations of the recursive \emph{Backtracking Algorithm}. But this size is also the limit 
+for the algorithm. A next bigger plain field of the size a $18 \times 18$ already needs about $9600000$ iterations and several 
+minutes to be solved. But since the program is made to solve sudoku fields of the size up to a $9 \times 9$, the 
+\emph{Backtracking Algorithm} has not been tested on real sudoku puzzles bigger than a $16 \times 16$. The implementation of the algorithm, 
 a method called \emph{backTracking()}, can be found in the file \emph{source/solver/sudoku.cpp}.
 \begin{figure}[!bhp]
    \begin{center}
@@ -612,15 +612,15 @@ a method called \emph{backTracking()}, can be found in the file \emph{source/sol
        \subcaption{}
      \end{minipage}     
      \caption[Different sudoku puzzles with different box sizes]{\scriptsize{Different sudoku puzzles with different box sizes.
-       The figures (a) and (b) both show 6x6 sudokus, but their boxes have a different orientation. In figure (c) a 9x9 sudoku
-       puzzle can be seen with an usual quadratic shaped box. Figure (d) shows a 12x12 sudoku, also with a rectangular shaped box.}}
+       The figures (a) and (b) both show a 6 x 6 sudokus, but their boxes have a different orientation. In figure (c) a 9 x 9
+       sudoku puzzle can be seen with an usual quadratic shaped box. Figure (d) shows a 12 x 12 sudoku, also with a rectangular shaped box.}}
      \label{fig:boxshapes}
    \end{center}
 \end{figure} 
 Furthermore also sudoku puzzles with rectangular shaped boxes can be solved. Such puzzles are shown in figure \ref{fig:boxshapes}.
-The size of the box has then be stated in \emph{include/settings.hpp} via the two parameters \emph{BOX\_WIDTH} and \emph{BOX\_HEIGHT}. The 
+The size of the box has then to be stated in \emph{include/settings.hpp} via the two parameters \emph{BOX\_WIDTH} and \emph{BOX\_HEIGHT}. The 
 program may also try to calculate the box size, if \emph{BOX\_WIDTH} and \emph{BOX\_HEIGHT} are set to zero, but this works only to a 
-certain extend, because the orientation of the rectangular box can not be determined that way.
+certain extend, because the orientation of the rectangular box can not be determined mathematically.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion}
@@ -629,8 +629,8 @@ certain extend, because the orientation of the rectangular box can not be determ
 \subsection{The Goal Of The Project}
 The final implementation worked even better than expected. Since we decided to implement our own version of an object character recognition 
 software instead of using an already existing OCR, the outcome of our project was not that clear. In the end even this point worked out and
-we got a sudoku solver which is able to find and solve proper 9x9 sudoku puzzles, as well as smaller ones like 6x6 which has a rectangular
-shaped and variable oriented box.
+we got a sudoku solver which is able to find and solve proper a $9 \times 9$ sudoku puzzles, as well as smaller ones like 
+a $6 \times 6$ which has a rectangular shaped and variable oriented box.
 
 \subsection{Problems}
 %TODO Problems eintragen
@@ -639,7 +639,7 @@ shaped and variable oriented box.
 The program works very good in general. It can detect lots of different sudoku puzzles out of newspapers or magazines with variable background colours.
 Problems might arise, when the illumination is not good enough which makes the data too poor to be processed. The font is also very important,
 when it comes to character recognition. If the font is too thin, our solver might not be able to identify the digits. As mentioned in section 
-\ref{sec:fieldextraction} the solver is currently optimized for the machine with which it was tested, so if the edge detection is too poor, 
+\ref{fieldextraction} the solver is currently optimized for the test system so, if the edge detection is too poor, 
 the two parameters \emph{CANNY\_LOW} and \emph{CANNY\_HIGH} should be adapted. The solver can also be optimized, for example for sudoku puzzles
 of one's favourite magazine, by adding more training data via the solver's GUI.
 
