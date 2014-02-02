@@ -431,35 +431,64 @@ The file system structure reflect the labeling. Figure \ref{fig:extract_dlg} sho
 labeling mechanism works.
 
 \subsection{Sudoku Solving}
-After we processed the digits it was time to actually solve the sudoku. Therefore we 
-implemented a class \emph{Sudoku} which provides all the necessary data and the solving 
-algorithm, as well. Among a variety of algorithms which are capable of solving sudoku puzzles,
-we decided to use the \emph{Backtracking Algorithm}. The basic idea is to enter numbers which
-do not violate the sudoku conventions cell by cell in the empty cells. Each entry then changes
-the possible numbers of the next cell. When the point is reached where an empty call has no 
+After we processed the digits it is now time to actually solve the sudoku. Therefore we 
+implemented a class \emph{Sudoku} which provides all necessary data to deal with a sudoku puzzle, 
+as well as the solving algorithm. Among a variety of algorithms which are capable of solving sudokus,
+we decided to use the \emph{Backtracking Algorithm}. Backtracking is not the fastest,
+but a less complicated algorithm to solve sudoku puzzles. Since we decided to design the program 
+only to solve sudokus up to a size of 9x9, backtracking was the better choice to this problem class than faster,
+but more complicated algorithms. \newline \newline The basic idea in backtracking is to enter numbers which
+do not violate the sudoku conventions, cell by cell in the empty cells. Each entry then changes
+the possible numbers of the next empty cell. When the point is reached where an empty call has no 
 possible numbers anymore, the algorithm goes back recursively to the previous cell and changes the value to
 the next possible number or goes back another cell, if the current cell has no candidates, either.
 How the algorithm works in detail is shown in figure \ref{fig:backtracking}.
 
 \begin{figure}[h!btp]
    \centering   
-   \begin{subfigure}[b]{\linewidth}
-     \includegraphics[height=0.1\textwidth]{imgs/backtracking1.png}\label{fig:b}  
-     \includegraphics[height=0.1\textwidth]{imgs/backtracking2.png}\label{fig:c}
-     \includegraphics[height=0.1\textwidth]{imgs/backtracking3.png}\label{fig:d}
-     \includegraphics[height=0.1\textwidth]{imgs/backtracking4.png}\label{fig:e}
-     \includegraphics[height=0.1\textwidth]{imgs/backtracking5.png}\label{fig:f}
-     \includegraphics[height=0.1\textwidth]{imgs/backtracking6.png}\label{fig:g}
-     \includegraphics[height=0.1\textwidth]{imgs/backtracking7.png}\label{fig:h}
-     \includegraphics[height=0.1\textwidth]{imgs/backtracking8.png}\label{fig:i}
-     \includegraphics[height=0.1\textwidth]{imgs/backtracking9.png}\label{fig:a}
-   \end{subfigure}
+   \begin{minipage}[h]{1.62cm}
+       \includegraphics[height=1.55cm]{imgs/backtracking1.png}  
+       \subcaption{}
+     \end{minipage}
+     \begin{minipage}[h]{1.63cm}
+       \includegraphics[height=1.55cm]{imgs/backtracking2.png}
+       \subcaption{}
+     \end{minipage}
+     \begin{minipage}[h]{1.62cm}
+       \includegraphics[height=1.55cm]{imgs/backtracking3.png}
+       \subcaption{}
+     \end{minipage}
+     \begin{minipage}[h]{1.62cm}
+       \includegraphics[height=1.55cm]{imgs/backtracking4.png}
+       \subcaption{}
+     \end{minipage}
+     \begin{minipage}[h]{1.62cm}
+       \includegraphics[height=1.55cm]{imgs/backtracking5.png}
+       \subcaption{}
+     \end{minipage}
+     \begin{minipage}[h]{1.63cm}
+       \includegraphics[height=1.55cm]{imgs/backtracking6.png}
+       \subcaption{}
+     \end{minipage}
+     \begin{minipage}[h]{1.62cm}
+       \includegraphics[height=1.55cm]{imgs/backtracking7.png}
+       \subcaption{}
+     \end{minipage}     
+     \begin{minipage}[h]{1.62cm}
+       \includegraphics[height=1.55cm]{imgs/backtracking8.png}       
+       \subcaption{}
+     \end{minipage}     
+     \begin{minipage}[h]{1.62cm}
+       \includegraphics[height=1.55cm]{imgs/backtracking9.png}
+       \subcaption{}
+     \end{minipage}     
       \caption[Solving a 6x6 Sudoku puzzel with Backtracking]{\scriptsize{Solving a 6x6 Sudoku puzzel with Backtracking. 
-        It can be seen, that the solver enters possible numbers in each empty cell one after the other 
-        (concerned number are shown in red). In picture five and six it can be seen that the numbers 5 and 6 in the first row are 
-        changing position. Because of a lack of possible numbers in picture number seven, the algorithm steps
-        back till the first empty cell and enters the next and in this case final value 5 in the field which 
-        can be seen in picture number nine, where the sudoku if fully solved.}}
+        It can be seen, that the solver enters possible numbers in each empty cell one after the other which is shown in 
+        the figures (a) to (e). In figure (e) and (f) can be seen, that the numbers 5 and 6 in the first row are 
+        changing position to obey the sudoku rules. Because of a lack of possible numbers in picture (g), the algorithm steps
+        back till one of the previous cells has a second possible number to enter. Here backtracking goes back till the first
+        empty cell and enters the next possible and in that case final number 5. To verify this the fully solved sudoku can be
+        seen in figure (f)}}
    \label{fig:backtracking}
 \end{figure} 
 
@@ -485,6 +514,7 @@ adjust them if you are trying to run the application on other webcams.
 \label{sec:results}
 
 \subsection{Field Extraction}
+\label{fieldextraction}
 
 In most cases, the field extraction works very well. The performance of it highly depends on the 
 parameters \emph{CANNY\_LOW} and \emph{CANNY\_HIGH}. Currently, they are tweaked to yield the best
@@ -550,36 +580,75 @@ sudokus work out of the box. This is no surprise, because most of the sudokus us
 similar scaling.
 
 \subsection{Sudoku Solver}
-The sudoku Solver, as it is implemented in the class \emph{Sudoku} is capable of solving a larger variety of 
-sudoku fields than the image processing part is able to process. Sudoku fields in the size of 16x16 can be solved.
-A plain field of that size needs 257 iterations of the recursive backtracking algorithm and 2176 different tries.
-But at this size is then the limit for the algorithm. A next bigger plain field of the size 18x18 already needs about
-9 600 000 iterations and several minutes to be solved on the used machine. But since the program is at its current state made to solve 
-sudoku fields of the size up to 9x9 the backtracking algorithm has not been tested on actual sudoku puzzles bigger than 16x16.
-\begin{figure}[h!btp]
+\label{imp_sudoku_solver}
+
+The sudoku Solver, as it is implemented in the class \emph{Sudoku}, is capable of solving a larger variety of 
+sudoku puzzles than the image processing part is able to process. Sudoku fields in the size of 16x16 can be solved.
+A plain field of that size needs about 257 iterations of the recursive backtracking algorithm. But this size is also the limit 
+for the algorithm. A next bigger plain field of the size 18x18 already needs about 9 600 000 iterations and several 
+minutes to be solved. But since the program at its current state is made to solve sudoku fields of the size up to 9x9, the 
+backtracking algorithm has not been tested on real sudoku puzzles bigger than 16x16. The implementation of the algorithm, 
+a method called \emph{backTracking()}, can be found in the file \emph{source/solver/sudoku.cpp}.
+\begin{figure}[!bhp]
    \begin{center}
-     \begin{subfigure}[b]{\linewidth}
-       \includegraphics[height=3.65cm]{imgs/6x6up.png}\label{fig:j}
-       \includegraphics[height=3.65cm]{imgs/solver_6x6.png}\label{fig:k}
-       \includegraphics[height=3.65cm]{imgs/solver_9x9.png}\label{fig:l}
-       \includegraphics[height=3.65cm]{imgs/solver_12x12.png}\label{fig:m}
-     \end{subfigure}
-        \caption[Different sudoku puzzles with different box sizes]{\scriptsize{Different sudoku puzzles with different box sizes.
-         The pictures one and two are both 6x6 sudokus, but their boxes have a different orientation. In the third picture a
-         9x9 sudoku puzzle can be seen with an usual quadratic box. The fourth picture shows a 12x12 sudoku again with a rectangular
-         shaped box.}}
+     \begin{minipage}[h]{3.8cm}
+       \includegraphics[height=3.5cm]{imgs/6x6up.png}
+       \label{fig:6x6up}
+       \subcaption{}
+     \end{minipage}
+     \begin{minipage}[h]{3.8cm}
+       \includegraphics[height=3.5cm]{imgs/solver_6x6.png}
+       \label{fig:6x6}
+       \subcaption{}
+     \end{minipage}
+     \begin{minipage}[h]{3.8cm}
+       \includegraphics[height=3.5cm]{imgs/solver_9x9.png}
+       \label{fig:9x9}
+       \subcaption{}
+     \end{minipage}
+     \begin{minipage}[h]{3.9cm}
+       \includegraphics[height=3.5cm]{imgs/solver_12x12.png}
+       \label{fig:12x12}
+       \subcaption{}
+     \end{minipage}     
+     \caption[Different sudoku puzzles with different box sizes]{\scriptsize{Different sudoku puzzles with different box sizes.
+       The figures (a) and (b) both show 6x6 sudokus, but their boxes have a different orientation. In figure (c) a 9x9 sudoku
+       puzzle can be seen with an usual quadratic shaped box. Figure (d) shows a 12x12 sudoku, also with a rectangular shaped box.}}
      \label{fig:boxshapes}
    \end{center}
 \end{figure} 
 Furthermore also sudoku puzzles with rectangular shaped boxes can be solved. Such puzzles are shown in figure \ref{fig:boxshapes}.
-The size of the box has then be initialised in \emph{settings.hpp}. The program may also try to calculate the box size on, but this works only to a certain extend. Despite that
-the orientation of the box can not be determined that way.
+The size of the box has then be stated in \emph{include/settings.hpp} via the two parameters \emph{BOX\_WIDTH} and \emph{BOX\_HEIGHT}. The 
+program may also try to calculate the box size, if \emph{BOX\_WIDTH} and \emph{BOX\_HEIGHT} are set to zero, but this works only to a 
+certain extend, because the orientation of the rectangular box can not be determined that way.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Blablabla
+\subsection{The Goal Of The Project}
+The final implementation worked even better than expected. Since we decided to implement our own version of an object character recognition 
+software instead of using an already existing OCR, the outcome of our project was not that clear. In the end even this point worked out and
+we got a sudoku solver which is able to find and solve proper 9x9 sudoku puzzles, as well as smaller ones like 6x6 which has a rectangular
+shaped and variable oriented box.
+
+\subsection{Problems}
+%TODO Problems eintragen
+
+\subsection{Features Of The Implementation}
+The program works very good in general. It can detect lots of different sudoku puzzles out of newspapers or magazines with variable background colours.
+Problems might arise, when the illumination is not good enough which makes the data too poor to be processed. The font is also very important,
+when it comes to character recognition. If the font is too thin, our solver might not be able to identify the digits. As mentioned in section 
+\ref{sec:fieldextraction} the solver is currently optimized for the machine with which it was tested, so if the edge detection is too poor, 
+the two parameters \emph{CANNY\_LOW} and \emph{CANNY\_HIGH} should be adapted. The solver can also be optimized, for example for sudoku puzzles
+of one's favourite magazine, by adding more training data via the solver's GUI.
+
+\subsection{Further Improvements}
+The future work will concentrate on the digit classification. By now we are able to find the digits from one to nine. For bigger sudoku puzzles
+it will be necessary to classify two-digit numbers and maybe even letters (for so-called \emph{Alphadokus}). Another field of future work will
+be the solving algorithm itself. As mentioned in section \ref{imp_sudoku_solver}, the algorithm reaches its limit at a certain sudoku size. A 
+possible candidate for larger sudoku fields might be the \emph{Human Solve Algorithm}.
+
 
 %%%
 %%% end main document
