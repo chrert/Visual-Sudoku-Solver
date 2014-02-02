@@ -282,7 +282,7 @@ a4paper,     %% defines the paper size: a4paper (default), a5paper, letterpaper,
 The goal of this project was to implement a visual sudoku solver which should be able
 to locate a sudoku field in a video taken from a webcam and present the solution of it
 directly on the empty cells in the original image. The application should run in realtime
-and be capable of solving arbitrary sudokus. 
+and should be capable of solving arbitrary sudokus. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Methods}
@@ -296,7 +296,7 @@ In this section we will describe the methods we used to reach our goals.
 First of all, the sudoku field must be localized and prepared for further
 processing. By means of simplicity we assume that the sudoku field must be
 the dominant object in the image. Furthermore, it must be clearly outlined by
-an thick dark frame. Most of the sudokus in papers and magazines fulfill this
+an thick dark frame. Most of the sudokus in newspapers and magazines fulfill this
 criteria.
 
 To find the sudoku a contour based segmentation of the image preprocessed by
@@ -407,19 +407,19 @@ The only preprocessing steps for the training and classification are:
   \item[Deskewing:] This operation makes the classification more robust for different
   fonts and for handwritten digits in future. This is done by calculating the central
   moments of the pixels. The skewness is given by the third central moments, which is
-  used to construct a affine transformation matrix for deskewing.
+  used to construct an affine transformation matrix for deskewing.
   \item[Crop:] Since there is a lot of unimportant background in the digit images, we
   crop the image to only include as much background as required. This is done by finding
   the bounding box of the digit contour.
   \item[Rescale:] The support vector machine requires all training and test data to have
   the same dimensionality. After cropping the image, there is no guarantee, that all resulting
-  images will have the same size. We overcome this issue by simply rescaling all input
+  images will have the same size. We overcome this issue by rescaling all input
   images for the Support Vector Machine to size $16 \times 16$. Therefore, every input
   vector has 256 dimensions.
   \item[Principal Component Analysis (PCA):] All of the three classificators are able to
   perform a PCA prior to the training (and consequently, also prior to the classification).
-  However, at this time there is no possibility to save and load the PCA, respectively.
-  So this feature is disabled by default. 
+  However, at this time there is no possibility to save and load the PCA,s o this feature is 
+  disabled by default. 
 \end{description}
 
 \subsubsection{Training data}
@@ -430,6 +430,13 @@ by hand. The application is then able to save the extracted training data to the
 The file system structure reflect the labelling. Figure \ref{fig:extract_dlg} shows how the
 labelling mechanism works.
 
+\begin{figure}
+  \centering
+  \includegraphics[width=0.9\textwidth]{imgs/label.png}
+  \caption{A screenshot of the labeling mechanismg.}
+  \label{fig:extract_dlg}
+\end{figure}
+
 \subsection{Sudoku Solving}
 After we processed the digits it is now time to actually solve the sudoku. Therefore we 
 implemented a class \emph{Sudoku} which provides all necessary data to deal with a sudoku puzzle, 
@@ -437,7 +444,9 @@ as well as the solving algorithm. Among a variety of algorithms which are capabl
 we decided to use the \emph{Backtracking Algorithm}. Backtracking is not the fastest,
 but a less complicated algorithm to solve sudoku puzzles. Since we decided to design the program 
 only to solve sudokus up to a size of $9 \times 9$, backtracking was the better choice to this problem class than faster,
-but more complicated algorithms. \newline \newline The basic idea of backtracking is to enter numbers which
+but more complicated algorithms.
+
+The basic idea of backtracking is to enter numbers which
 do not violate the sudoku conventions, cell by cell, in the empty cells. Each entry then changes
 the possible entries of the next empty cell. When the point is reached where an empty call has no 
 possible entry anymore, the algorithm goes back recursively to the previous cell and changes the value to
@@ -629,16 +638,13 @@ certain extend, because the orientation of the rectangular box can not be determ
 \subsection{The Goal Of The Project}
 The final implementation worked even better than expected. Since we decided to implement our own version of an object character recognition 
 software instead of using an already existing OCR, the outcome of our project was not that clear. In the end even this point worked out and
-we got a sudoku solver which is able to find and solve proper a $9 \times 9$ sudoku puzzles, as well as smaller ones like 
-a $6 \times 6$ which has a rectangular shaped and variable oriented box.
-
-\subsection{Problems}
-%TODO Problems eintragen
+we got a sudoku solver which is able to find and solve proper $9 \times 9$ sudoku puzzles, as well as smaller ones like 
+$6 \times 6$ which has a rectangular shaped and variable oriented box.
 
 \subsection{Features Of The Implementation}
 The program works very good in general. It can detect lots of different sudoku puzzles out of newspapers or magazines with variable background colours.
 Problems might arise, when the illumination is not good enough which makes the data too poor to be processed. The font is also very important,
-when it comes to character recognition. If the font is too thin, our solver might not be able to identify the digits. As mentioned in section 
+when it comes to character recognition. If the font is too thin, our solver might not be able to identify the digits, as mentioned in section 
 \ref{fieldextraction} the solver is currently optimized for the test system so, if the edge detection is too poor, 
 the two parameters \emph{CANNY\_LOW} and \emph{CANNY\_HIGH} should be adapted. The solver can also be optimized, for example for sudoku puzzles
 of one's favourite magazine, by adding more training data via the solver's GUI.
