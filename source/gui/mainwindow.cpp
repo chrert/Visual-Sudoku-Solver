@@ -92,7 +92,7 @@ void MainWindow::clearSudokuView()
 void MainWindow::printOnConsole(const QString &msg)
 {
   QMutexLocker locker(&_consoleLock);
-  //ui->console->appendPlainText(msg);
+  ui->console->appendPlainText(msg);
 }
 
 void MainWindow::setupSudokuGrid()
